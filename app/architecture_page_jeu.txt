@@ -1,0 +1,119 @@
+Un jeu côté application mobile est généralement organisé de manière suivante:
+
+à 'pages' dans l'architecture:
+NomDuJeu.page.js qui contient: 
+"
+    import React, {Component} from 'react';
+    import NomDuJeu from './components/NomDuJeu/NomDuJeu.component'
+
+    class NomDuJeuPage extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+        render () {
+        return (
+            <NomDuJeu
+            parcours = {this.props.route.params.parcours}
+            currentGame = {this.props.route.params.currentGame}
+            />
+        );
+        }
+
+    }
+
+    export default NomDuJeuPage
+"
+dans pages/components/NomDuJeu:
+un fichier NomDuJeu.component.js ainsi qu'un fichier associé NomDuJeu.component.style.js
+------------------------------------------------------------------------------------------------------------------------------------------------
+Le fichier style contiendra les styles utilisés dans notre composant. La plupart proviennent de common de la manière suivante:
+    import { StyleSheet } from 'react-native';
+    import common from '../../../styles/common.style.js'
+    export default StyleSheet.create({
+    nomDuStyle: {
+      ...common.nomDuStyle
+    },
+    });
+------------------------------------------------------------------------------------------------------------------------------------------------
+Le fichier component contiendra: 
+    Notre classe :
+    class NomDuJeu extends Component{
+        constructor(props){
+            super(props);
+            ...;
+            this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        }
+        componentDidMount() {
+            BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
+        componentWillUnmount() {
+            BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+        }
+        handleBackButtonClick() {
+            return true;
+        }
+Cette partie a servi à récupérer les propiriétés passées en paramètres et à désactiver le bouton retour du téléphone 
+    
+        ...;
+        render() {
+            ... (initialisation des const);
+            var TopBarreName = "Étape " + this.props.currentGame.ordre + "/" + (this.props.currentGame.sizeleft + this.props.currentGame.ordre);
+            return (
+                <SafeAreaView style={styles.outsideSafeArea}>
+                    <View style={styles.globalContainer}>
+                        <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
+Ceci est la barre en haut de l'écran avec les logo et le nom de la page (ou la progression dans le parcours)
+                            <View style={styles.card}>
+Cette vue de style card contient le jeu
+                                <Text style={styles.title}>{VariableContenantLeTitreDuJeu}</Text>
+                                <Text style={styles.description} >{VariableContenantLaQuestion}</Text>
+                                <Text style={styles.description} >{VariableContenantLaDescription}</Text>
+Parfois un seul des deux champs précédent est présent, parfois il y a aussi les règles. C'est à adapter selon le jeu
+                                <Image source={{ uri: this.props.currentGame.image_url }} style={styles.areaImage} />
+Il y a ensuite le champ même du jeu, parfois l'image n'est pas comme ici, par exemple pour trouver l'intrus.
+                            </View>
+                            ---------------------------------------------------
+Il y a la bouton pour avancer. Si le jeu nécessite une page réponse, il faut rediriger vers GameOutcomePage, avec les paramètres parcours; currentGame et win
+sinon on redirige vers GamePage avec parcours en paramètre. Ceci est présent dans la majorité des cas, mais par exemple le QCM ou trouver l'intrus permettent 
+d'avancer sans bouton valider mais dès qu'on choisit une réponse. Dans ce cas, cette partie n'est pas présente
+                            <View style={styles.rightAlign}>
+                                <NextPage pageName={"NomPageSuivante"}
+                                    parameters={{
+                                        // paramètres
+                                    }}
+                                    text="Valider"
+                                    blockButton={true}
+                                />
+                            </View>
+                            -------------------------------------------------------
+                        </ScrollView>
+                    </View>
+                </SafeAreaView>
+            );
+        }
+    }
+    export default function (props) {
+        const navigation = useNavigation();
+        return <NomDuJeu {...props} navigation={navigation} />
+    }
+------------------------------------------------------------------------------------------------------------------------------------------
+Il faut ensuite compléter si nécessaire le fichier GameOutcomePage.component.js, soit en ajoutant NomDuJeu à la liste des possibilités, soit, si cela nécessite
+un traitement particulier en rajoutant un nouveau traitement, avant ceci:
+    this.props.parcours[this.props.parcours.length - 1].score_max++;
+    if (win) {
+      this.props.parcours[this.props.parcours.length - 1].score++;
+    }
+-------------------------------------------------------------------------------------------------------------------------------------------
+dans GamePage.component.js, ajouter:
+        case ("NomDuJeu""): {
+          navigation.navigate("NomDuJeuPage",{parcours : parcours, currentGame : currentGame});
+          break;
+        }
+--------------------------------------------------------------------------------------------------------------------------------------------
+dans Navigation.js, dans HomeStack, ajouter:
+                <Stack.Screen
+                    name="NomDuJeuPage"
+                    component={NomDuJeuPage}
+                    options={{ headerShown: false }}
+                />

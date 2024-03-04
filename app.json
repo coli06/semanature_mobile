@@ -1,0 +1,38 @@
+{
+	"expo": {
+		"name": "Scrute la Nature",
+		"slug": "LPOMobApp",
+		"version": "1.4.3",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "light",
+		"splash": {
+			"image": "./assets/splash.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#ffffff"
+		},
+		"assetBundlePatterns": [
+			"**/*"
+		],
+		"ios": {
+			"supportsTablet": true
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/adaptive-icon.png",
+				"backgroundColor": "#ffffff"
+			},
+			"package": "com.lpo.GameOfNature",
+			"versionCode": 12
+		},
+		"web": {
+			"favicon": "./assets/favicon.png"
+		},
+		"owner": "lpo",
+		"extra": {
+			"eas": {
+				"projectId": "8caa5721-b096-47e9-b4b1-abdc4b019ed5"
+			}
+		}
+	}
+}
