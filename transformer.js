@@ -1,8 +1,27 @@
 const obfuscatingTransformer = require("react-native-obfuscating-transformer");
 
 module.exports = obfuscatingTransformer({
-	/* Insert here any required configuration */
-
-	// offusque TOUT les fichiers
-	filter: (filename, source) => true
+  // offusque TOUT les fichiers
+	filter: (filename, source) => true,
+  obfuscatorOptions: {
+    compact: true,
+    controlFlowFlattening: true,
+    controlFlowFlatteningThreshold: 0.75,
+    deadCodeInjection: true,
+    deadCodeInjectionThreshold: 0.4,
+    debugProtection: false,
+    debugProtectionInterval: false,
+    disableConsoleOutput: true,
+    identifierNamesGenerator: 'hexadecimal',
+    log: false,
+    renameGlobals: false,
+    rotateStringArray: true,
+    selfDefending: true,
+    stringArray: true,
+    stringArrayEncoding: ['base64'],
+    stringArrayThreshold: 0.75,
+    transformObjectKeys: true,
+    unicodeEscapeSequence: false,
+  },
+  upstreamTransformer: require('metro-react-native-babel-transformer'),
 });

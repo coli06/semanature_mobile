@@ -20,10 +20,6 @@ class TopBarre extends Component {
 				<Text style={styles.text}>
 					{name}
 				</Text>
-
-				<View style={styles.imageContainer}>
-					<Image source={PlaceholderLogoSEM} style={styles.icone} />
-				</View>
 			</View>
 		);
 	}

@@ -8,9 +8,7 @@ class LPOMobApp extends Component {
 	render() {
 		return (
 			<NavigationContainer>
-
-				<Navigation
-				/>
+				<Navigation/>
 			</NavigationContainer>
 		);
 	}
@@ -18,5 +16,5 @@ class LPOMobApp extends Component {
 
 export default function () {
 	autoSignIn();
-	return <LPOMobApp />
+	return <LPOMobApp/>
 }

@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import loadParcoursLocally from "./loadParcoursLocally";
 
 /**
- * delete the parcours from the disque
+ * delete the parcours from disk
  * @param identifiant 
  * @returns 
  */
@@ -51,7 +51,7 @@ export default async function deleteLocalParcours(identifiant) {
  */
 async function deleteObject(key) {
 
-	// Base64-encoded data -> str.length = espace occuper par l'objet en Mo
+	// Base64-encoded data -> str.length = espace occupé par l'objet en Mo
 	const cutSize = 1000000;
 	let nbCuts = parseInt(await AsyncStorage.getItem(key));
 

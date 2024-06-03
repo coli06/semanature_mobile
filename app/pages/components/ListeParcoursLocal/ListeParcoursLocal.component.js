@@ -51,13 +51,13 @@ class ListeParcoursLocal extends Component {
             );
 
         }
-        //S'il y a des parcours disponibles, on les affiches dans une liste défilante.
+        //S'il y a des parcours disponibles, on les affiche dans une liste défilante.
         else {
             return (
                 <SafeAreaView style={styles.outsideSafeArea}>
                     <TopBarre name="Parcours téléchargés" />
                     <View style={styles.globalContainer}>
-                    <Text style={styles.description}>Retrouvez ici tous les parcours déjà téléchargés et disponibles hors-ligne et vos scores.</Text>
+                    <Text style={styles.description}>Retrouvez ici tous les parcours déjà téléchargés et disponibles hors-ligne ainsi que vos scores.</Text>
                         <FlatList
                             extraData={this.props.refresh}
                             data={allDataSource}

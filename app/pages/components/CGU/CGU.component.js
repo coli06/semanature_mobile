@@ -19,10 +19,10 @@ class CGU extends Component {
                         </Text>
                         <Text style={styles.title_inter}> Mentions légales</Text>
                         <Text style={styles.text}>
-                            <Text style={styles.textBold}>Propriétaire: </Text> LPO AuRA dt Loire - 11 rue René Cassin - 42100 Saint-Etienne
+                            <Text style={styles.textBold}>Propriétaire: </Text> LPO AuRA dt Loire - 11 rue René Cassin - 42100 Saint-Étienne
                         </Text>
                         <Text style={styles.textBis}>
-                            <Text style={styles.textBold}>Créateur: </Text> École d'ingénieurs Télécom Saint-Etienne
+                            <Text style={styles.textBold}>Créateur: </Text> École d'ingénieurs Télécom Saint-Étienne
                         </Text>
                         <Text style={styles.text}>
                             <Text style={styles.textBold}>Responsable Publication: </Text> LPO AuRA dt Loire
@@ -37,7 +37,7 @@ class CGU extends Component {
                             Objet
                         </Text>
                         <Text style={styles.text}>
-                            Les présentes conditions générales d’utilisation (ci-après dénommées « CGU ») ont pour objet de déterminer les règles d’encadrement du jeu « Scrute la Nature », mis en place par la LPO AuRA, Télécom Saint-Etienne et Saint-Etienne-Métropole. Les présentes CGU concernent les règles d’utilisation de l’application mobile.
+                            Les présentes conditions générales d’utilisation (ci-après dénommées « CGU ») ont pour objet de déterminer les règles d’encadrement du jeu « Scrute la nature », mis en place par la LPO AuRA, Télécom Saint-Étienne et Saint-Étienne-Métropole. Les présentes CGU concernent les règles d’utilisation de l’application mobile.
                         </Text>
                         <Text style={styles.title_inter}>
                             Définitions
@@ -46,9 +46,9 @@ class CGU extends Component {
                             Les termes employés au sein des présentes CGU auront la signification qui leur est donnée ci-après:
                         </Text>
                         <Text style={styles.text}>
-                            •	"Application" désigne l'application mobile "Scrute la Nature" éditée et fournie par la LPO AuRA et l'école d'Ingénieurs Télécom Saint-Etienne, donnant accès au jeu, qui est disponible gratuitement
+                            •	"Application" désigne l'application mobile "Scrute la nature" éditée et fournie par la LPO AuRA et l'école d'Ingénieurs Télécom Saint-Étienne, donnant accès au jeu, qui est disponible gratuitement
                             dans le "Google Play Store" de Google pour être téléchargée par l'Utilisateur sur son terminal Android. L'Application comprend également les contenus, les logiciels, les programmes, les outils (de programmation, de navigation, ...),
-                            les bases de données, les systèmes d'exploitation, la documentation et tous autres éléments et services qui la composent, les mises à jour et les nouvelles versions qui peuvent être apportées à l'Application par la LPO AuRA et Télécom Saint-Etienne.
+                            les bases de données, les systèmes d'exploitation, la documentation et tous autres éléments et services qui la composent, les mises à jour et les nouvelles versions qui peuvent être apportées à l'Application par la LPO AuRA et Télécom Saint-Étienne.
                         </Text>
                         <Text style={styles.text}>
                             •	« Utilisateur » ou « Participant » désigne une personne physique majeure (ou mineure ayant préalablement obtenu l’autorisation de ses parents ou de la personne investie de l'autorité parentale et encadrée par elle lors de la participation au jeu), participant au jeu pour ses besoins propres, dans le cadre d’un usage strictement personnel et non commercial, sans but lucratif direct ou indirect.
@@ -138,7 +138,7 @@ class CGU extends Component {
                             Contact
                         </Text>
                         <Text style={styles.text}>
-                            Toute question relative au jeu et/ou aux services doit être adressée par courrier postal à l'adresse suivante: la LPO AuRA dt Loire - 11 rue René Cassin - 42100 Saint-Etienne
+                            Toute question relative au jeu et/ou aux services doit être adressée par courrier postal à l'adresse suivante: la LPO AuRA dt Loire - 11 rue René Cassin - 42100 Saint-Étienne
                         </Text>
                         <Text style={styles.title_inter}>
                             Loi applicable

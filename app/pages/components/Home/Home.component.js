@@ -23,7 +23,7 @@ class Home extends Component {
                 <TopBarre name="Accueil" />
                 <ScrollView style={styles.scrollView}>
                 <View style={styles.globalContainer}>
-                    <Text style={styles.MainTitle}>Scrute La Nature</Text>
+                    <Text style={styles.MainTitle}>Scrute la nature</Text>
                     <View style={styles.card}>
                         <Text style={styles.title}>
                             Le royaume du vivant est menacé.
@@ -32,7 +32,7 @@ class Home extends Component {
                             Choisissez votre commune, partez à la découverte de ses habitants, découvrez de superbes coins de nature, déjouez les mauvais tours, résolvez les énigmes et rétablissez l’équilibre !
                         </Text>
                         <Text style={styles.description}>
-                            A vos marques, prêts, partez !
+                            À vos marques, prêts, partez !
                         </Text>
                         <View style={styles.gameArea}>
                         <Image source={MesangeImage} style={styles.areaImage} />
@@ -52,7 +52,7 @@ class Home extends Component {
                             <Text style={styles.boutonText}>Principes</Text>
                         </TouchableOpacity>
                         <Text style={styles.small_info}>
-                            Cet outil a été créé lors de l’ABI (Atlas de la biodiversité) de Saint-Etienne-Métropole.
+                            Cet outil a été créé lors de l’ABI (Atlas de la Biodiversité Intercommunal) de Saint-Étienne Métropole.
                         </Text>
                     </View>
                     <View style={styles.gameArea}>
