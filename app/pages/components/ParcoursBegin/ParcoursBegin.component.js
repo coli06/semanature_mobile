@@ -44,11 +44,8 @@ class ParcoursBegin extends Component {
                     <TouchableOpacity style={styles.bouton2}>
                             <ActivityIndicator size="small" color="#ffffff" />
                     </TouchableOpacity>
-                        
-
                     ) : (
                         <NextPage pageName="GamePage" parameters={{ parcours: parcoursEtapes, parcoursId: identifiant }} blockButton={true} text="Commencer" />
-
                     )}
 
                     {/*{(this.props.isInit) && (

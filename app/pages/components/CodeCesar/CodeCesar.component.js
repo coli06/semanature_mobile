@@ -16,9 +16,9 @@ import {getParcoursContents} from "../../../utils/queries";
 class CodeCesar extends Component {
     constructor(props) {
         super(props);
-        // récupère le texte initiale et le décalage et retient dans 'newText'le texte crypté.
+        // récupère le texte initial et le décalage puis retient le texte crypté dans 'newText'.
         this.state = {
-            newText: Cesar(NormalizeStrings(this.props.currentGame.texteBrut),parseInt(this.props.currentGame.decalage)),
+            newText: Cesar(NormalizeStrings(this.props.currentGame.texteBrut), parseInt(this.props.currentGame.decalage)),
             communesData: null
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
@@ -71,12 +71,13 @@ class CodeCesar extends Component {
     const title = this.props.currentGame.nom;
     const { communesData } = this.state;
     const maxEtape = communesData ?? "-";
-    if (maxEtape.max_etape === undefined)
+    if (maxEtape.max_etape === undefined) {
       var TopBarreName = "";
-    else
-      var TopBarreName = "Etape : " + this.props.currentGame.n_etape + "/" + maxEtape.max_etape;
+    } else {
+      var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + maxEtape.max_etape;
+    }
 
-      const icone = require('./../../../assets/code_cesar_icone.png');
+    const icone = require('./../../../assets/code_cesar_icone.png');
     const illustration = this.props.currentGame.image_url;
 
         return (

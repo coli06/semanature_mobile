@@ -36,7 +36,7 @@ class ListeParcoursLocal extends Component {
                 </SafeAreaView>
             );
         }
-        //Si il n'y a rien de retourné, on affiche un petit message d'erreur
+        // Si il n'y a rien de retourné, on affiche un petit message d'erreur
         else if (allDataSource.length === 0) {
             return (
                 <SafeAreaView style={styles.outsideSafeArea}>
@@ -49,7 +49,6 @@ class ListeParcoursLocal extends Component {
                     </View>
                 </SafeAreaView>
             );
-
         }
         //S'il y a des parcours disponibles, on les affiche dans une liste défilante.
         else {
@@ -76,6 +75,7 @@ class ListeParcoursLocal extends Component {
         }
     }
 }
+
 export default function (props) {
     const [refresh, setRefresh] = useState(true);
     const [allDataSource, setAllDataSource] = useState([]);

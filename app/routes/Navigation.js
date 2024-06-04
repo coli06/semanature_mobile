@@ -36,9 +36,10 @@ import HomeTab from '../pages/components/HomeTab/HomeTab.component.js';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 /** Il s'agit du navigator s'occupant des parcours
- *  Chaque type de page doit y être ajouté si elle intervient dans un parcours
+ *  Chaque type de page doit y être ajouté si cette dernière intervient dans un parcours
  * @returns 
  */
+
 function HomeStack() {
 	return (
 		<Stack.Navigator>

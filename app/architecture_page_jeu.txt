@@ -53,7 +53,7 @@ Le fichier component contiendra:
         handleBackButtonClick() {
             return true;
         }
-Cette partie a servi à récupérer les propiriétés passées en paramètres et à désactiver le bouton retour du téléphone 
+Cette partie a servi à récupérer les propriétés passées en paramètre et à désactiver le bouton retour du téléphone 
     
         ...;
         render() {
@@ -74,8 +74,8 @@ Parfois un seul des deux champs précédent est présent, parfois il y a aussi l
 Il y a ensuite le champ même du jeu, parfois l'image n'est pas comme ici, par exemple pour trouver l'intrus.
                             </View>
                             ---------------------------------------------------
-Il y a la bouton pour avancer. Si le jeu nécessite une page réponse, il faut rediriger vers GameOutcomePage, avec les paramètres parcours; currentGame et win
-sinon on redirige vers GamePage avec parcours en paramètre. Ceci est présent dans la majorité des cas, mais par exemple le QCM ou trouver l'intrus permettent 
+Il y a le bouton pour avancer. Si le jeu nécessite une page réponse, il faut rediriger vers GameOutcomePage, avec les paramètres parcours; currentGame et win
+sinon on redirige vers GamePage avec parcours en paramètre. Ceci est présent dans la majorité des cas, mais par exemple QCM ou trouver l'intrus permettent 
 d'avancer sans bouton valider mais dès qu'on choisit une réponse. Dans ce cas, cette partie n'est pas présente
                             <View style={styles.rightAlign}>
                                 <NextPage pageName={"NomPageSuivante"}

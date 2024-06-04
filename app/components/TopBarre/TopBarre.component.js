@@ -12,7 +12,7 @@ class TopBarre extends Component {
 	render() {
 		const PlaceholderImage = require('./../../assets/logo_LPO.png');
 		const PlaceholderLogoSEM = require('./../../assets/logo_SM.png');
-		const { name } = this.props
+		const { name } = this.props;
 		return (
 			<View style={styles.barreContainer}>
 				<Image source={PlaceholderImage} style={styles.icone} />

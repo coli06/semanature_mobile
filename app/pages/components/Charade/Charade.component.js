@@ -42,9 +42,11 @@ class Charade extends Component {
                 return null; // or some default value if an error occurs
             });
     }
+
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+
     handleBackButtonClick() {
         return true;
     }
@@ -52,15 +54,14 @@ class Charade extends Component {
     handleInputTextChange = (input) => this.setState({ proposition: input }) // Proposition de l'utilisateur
 
     render() {
-
         const { communesData } = this.state;
         const paragraph = this.props.currentGame.texte;
         const maxEtape = communesData ?? "-";
-        if (maxEtape.max_etape === undefined)
+        if (maxEtape.max_etape === undefined) {
             var TopBarreName = "";
-        else
+        } else {
             var TopBarreName = "Etape : " + this.props.currentGame.n_etape + "/" + maxEtape.max_etape;
-
+        }
 
         const charade = this.props.currentGame.charade;
         const reponse = NormalizeStrings(this.props.currentGame.reponse);

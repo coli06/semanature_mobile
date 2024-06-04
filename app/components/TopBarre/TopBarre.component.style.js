@@ -6,19 +6,22 @@ export default StyleSheet.create({
 		padding: 10,
 		backgroundColor: theme.SECONDARY_COLOR,
 		flexDirection: 'row',
-		justifyContent: 'space-between',
+		justifyContent: 'center',
 		alignItems: 'center',
+		position: 'relative',
 		width: '100%',
 	},
 	text: {
 		color: theme.PRIMARY_COLOR,
 		fontSize: theme.FONT_SIZE_TITLE,
 		fontWeight: theme.FONT_WEIGHT_BOLD,
-		textAlign: 'justify',
+		textAlign: 'center',
 	},
 	icone: {
 		width: 46,
 		height: 46,
 		resizeMode: 'contain',
+		position: 'absolute',
+		left: 5,
 	}
 });
