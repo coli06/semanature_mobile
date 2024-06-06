@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Scrute la Nature",
+    "name": "Scrute la nature",
     "slug": "LPOMobApp",
     "version": "1.4.3",
     "orientation": "portrait",
@@ -34,6 +34,7 @@
       "eas": {
         "projectId": "8caa5721-b096-47e9-b4b1-abdc4b019ed5"
       }
-    }
+    },
+    "plugins": ["@logrocket/react-native"]
   }
 }

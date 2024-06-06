@@ -5,7 +5,6 @@ import ParcoursCard from './../../../components/ParcoursCard/ParcoursCard.compon
 import theme from './../../../styles/theme.style';
 import styles from './ListeParcoursLocal.component.style'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getParcoursFromCommuneLocally } from "../../../utils/loadParcoursLocally";
 import { useFocusEffect } from "@react-navigation/native";
@@ -36,7 +35,7 @@ class ListeParcoursLocal extends Component {
                 </SafeAreaView>
             );
         }
-        // Si il n'y a rien de retourné, on affiche un petit message d'erreur
+        // Si rien n'est retourné, on affiche un petit message d'erreur
         else if (allDataSource.length === 0) {
             return (
                 <SafeAreaView style={styles.outsideSafeArea}>
@@ -50,7 +49,7 @@ class ListeParcoursLocal extends Component {
                 </SafeAreaView>
             );
         }
-        //S'il y a des parcours disponibles, on les affiche dans une liste défilante.
+        // S'il y a des parcours disponibles, on les affiche dans une liste défilante.
         else {
             return (
                 <SafeAreaView style={styles.outsideSafeArea}>

@@ -24,7 +24,7 @@ export async function searchAndGetCommunes(cityName) {
 	return communes;
 }
 
-// Return all communes which exist in database
+// Return all communes that exist in database
 export async function getAllCommunes() {
 	const communes = [];
 	const res = await getDocs(collection(db, "commune"));

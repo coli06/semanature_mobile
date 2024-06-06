@@ -1,18 +1,19 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, Image, TouchableOpacity, ActivityIndicator} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './ParcoursCard.component.style'
 import {telechargerParcours} from './saveParcours';
 import {useNavigation} from '@react-navigation/native';
 import deleteLocalParcours from '../../utils/deleteLocalParcours';
 import loadParcoursLocally, {getParcoursFromCommuneLocally} from '../../utils/loadParcoursLocally';
 
-/**
- * Créé une barre en haut de la page pour afficher le nom de la page, passé en paramètre, ainsi que les icones de la LPO et SEM métropole
- */
 const ParcoursCard = (props) => {
     const [loading, setLoading] = useState(false);
     const [loadingChoix, setLoadingChoix] = useState(false);
+
+    useEffect(() => {
+        // regarde si on a une sauvegarde du parcours ou pas
+        checkLocalSave();
+    }, [props.parcours.identifiant]);
 
     const checkLocalSave = () => {
         loadParcoursLocally(props.parcours.identifiant).then((parcours) => {
@@ -42,13 +43,6 @@ const ParcoursCard = (props) => {
         });
     };
 
-    useEffect(() => {
-        // regarde si on a une sauvegarde du parcours ou pas
-        checkLocalSave();
-    }, [props.parcours.identifiant]);
-
-
-
     // données du parcours à afficher
     const titre = props.parcours.titre;
     const image_url = props.parcours.image_url;
@@ -71,9 +65,8 @@ const ParcoursCard = (props) => {
         // Affichage du titre, illustrations, difficulté, durée, nom de la commune et description du parcours
         // Puis dans la vue rowFlex on a les deux boutons pour commencer le parcours ou pour le télécharger
         <View style={styles.card}>
-            <Text style={styles.title}>Parcours</Text>
-            {props.image !== '' && <Image source={{ uri: props.image }} style={styles.imagecontainer} />}
             <Text style={styles.title}>{titre}</Text>
+            {props.image !== '' && <Image source={{ uri: props.image }} style={styles.imagecontainer} />}
             <Text style={styles.texte_imp}>Durée : {duree}; Difficulté : {difficulte}</Text>
             {props.score !== null && props.scoreMax !== null && (
                 <Text style={styles.texte}>Score : {props.score} / {props.scoreMax}</Text>
@@ -86,7 +79,7 @@ const ParcoursCard = (props) => {
                         if (props.dataLoaded) {
                             setLoadingChoix(true);
                             props.navigation.navigate("ParcoursBeginPage", { identifiant: id });
-                        } else if (props.internetAvailable) {
+                        } else if (internetAvailable) {
                             setLoadingChoix(true);
                             telechargerParcours(props.parcours).then(() => {
                                 props.navigation.navigate("ParcoursBeginPage", { identifiant: id });
@@ -95,12 +88,12 @@ const ParcoursCard = (props) => {
                     }}
                     style={styles.bouton2}
                 >
-                    {loadingChoix ? ( // Affiche le loader si l'état 'loading_choix' est vrai
+                    {loadingChoix ? ( // Affichage du loader si l'état 'loading_choix' est vrai
                         <View style={styles.loaderContainer}>
                             <ActivityIndicator size="small" color="#ffffff" />
                         </View>
                     ) : (
-                        <Text style={styles.boutonText}>Choisir ce parcours</Text>
+                        <Text style={styles.boutonText}>Commencer ce parcours</Text>
                     )}
                 </TouchableOpacity>
                 {props.dataLoaded && (
@@ -150,23 +143,17 @@ const ParcoursCard = (props) => {
     );
 }
 
-/**
- * Créé une barre en haut de la page pour afficher le nom de la page, passé en paramètre, ainsi que les icones de la LPO et SEM métropole
- */
 export default function (props) {
-
     // pour changer de page
     const navigation = useNavigation();
 
-    // state variable liées à si une sauvegarde du parcours est sur le  disque ou pas
+    // state variables liées à si une sauvegarde du parcours est sur le disque ou pas
     [score, setScore] = useState(null);
     [scoreMax, setScoreMax] = useState(null);
     [dataLoaded, setDataLoaded] = useState(null);
     [image, setImage] = useState('');
 
-    useEffect(() => { }, [image])
-
-    // wrapper du components dans une fonction
+    // wrapper du component dans une fonction
     return <ParcoursCard {...props}
                          navigation={navigation}
                          reload={props.reload}

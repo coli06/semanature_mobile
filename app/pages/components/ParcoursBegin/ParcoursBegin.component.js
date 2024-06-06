@@ -35,22 +35,16 @@ class ParcoursBegin extends Component {
                     <View style={styles.card}>
                         <MainTitle title="C'est parti !!!" />
                         <Image
-                            source={require('./../../../assets/parcours_begin_icone.png')}
+                            source={icone}
                             style={[styles.image, { width: imageWidth }]}
                         />
                     </View>
 
                     {!this.props.isInit ? ( // Affiche le loader si l'état 'loading' est vrai
-                    <TouchableOpacity style={styles.bouton2}>
-                            <ActivityIndicator size="small" color="#ffffff" />
-                    </TouchableOpacity>
+                            <ActivityIndicator size="large" color={styles.activityIndicator.color} />
                     ) : (
                         <NextPage pageName="GamePage" parameters={{ parcours: parcoursEtapes, parcoursId: identifiant }} blockButton={true} text="Commencer" />
                     )}
-
-                    {/*{(this.props.isInit) && (
-                        <NextPage pageName="GamePage" parameters={{ parcours: parcoursEtapes, parcoursId: identifiant }} blockButton={true} text="Commencer" />
-                    )}*/}
                 </View>
             </SafeAreaView>
         );
@@ -64,9 +58,8 @@ export default function (props) {
     const [etapesData, setEtapesData] = useState([]);
     const [isInit, setIsInit] = useState(false);
     useEffect(() => {
-        var temp;
-        async function f() {
-            temp = await loadParcoursLocally(identifiant);
+        async function loadParcours() {
+            var temp = await loadParcoursLocally(identifiant);
             if (temp == undefined) {
                 temp = await getParcoursContents(identifiant);
             }
@@ -75,8 +68,7 @@ export default function (props) {
             setEtapesData(temp.etapes);
             //console.log(temp.etapes)
         }
-        f();
-
+        loadParcours();
     }, [])
     return <ParcoursBegin {...props} generalData={generalData} setGeneralData={setGeneralData} etapesData={etapesData} setEtapesDataa={setEtapesData} navigation={navigation} isInit={isInit} />;
 }

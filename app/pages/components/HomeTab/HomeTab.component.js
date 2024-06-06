@@ -4,6 +4,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import theme from '../../../styles/theme.style';
 import styles from './HomeTab.component.style.js';
 
+/* Home circle icon from bottom navbar
+*/
 const HomeTab = ({focused}) => {
     return (
         <View style={styles.tabContainer}>

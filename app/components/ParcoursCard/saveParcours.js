@@ -7,23 +7,24 @@ import NetInfo from "@react-native-community/netinfo";
  * @param {*} parcours 
  */
 export default async function saveParcours(parcours) {
-	let tmp = NetInfo.fetch()
-	let connexionAvailable;
-	tmp.then((state) => connexionAvailable = state.isInternetReachable)
-	await tmp;
-	if (!connexionAvailable) {
-		return Promise.reject("internet indisponible");
-	}
+	try {
+        const state = await NetInfo.fetch();
+        if (!state.isInternetReachable) {
+            return Promise.reject("internet indisponible");
+        }
+    } catch (error) {
+        return Promise.reject("Erreur lors de la vérification de la connexion Internet");
+    }
 
 	// ajoute la commune aux communes connues en local
-	let temp = await AsyncStorage.getItem('commune');
+	const temp = await AsyncStorage.getItem('commune');
 	if (temp == null) {
-		AsyncStorage.setItem('commune', JSON.stringify([parcours.commune]));
+		await AsyncStorage.setItem('commune', JSON.stringify([parcours.commune]));
 	} else {
-		let communes = JSON.parse(temp);
-		if (communes.find((item) => item == parcours.commune) === undefined) {
+		const communes = JSON.parse(temp);
+		if (!communes.includes(parcours.commune)) {
 			communes.push(parcours.commune);
-			AsyncStorage.setItem('commune', JSON.stringify(communes));
+			await AsyncStorage.setItem('commune', JSON.stringify(communes));
 		}
 	}
 
@@ -33,46 +34,46 @@ export default async function saveParcours(parcours) {
 		let etapes;
 		etapes = await getParcoursContents(parcours.identifiant);
 		if (etapes == null || etapes == {}) {
-			return Promise.reject("Couldn't get parcours from fireBase");
+			return Promise.reject("Couldn't get parcours from firebase");
 		}
 		etapes.general.length = etapes.etapes.length;
-		saveObject(parcours.identifiant, JSON.stringify(etapes));
+		await saveObject(parcours.identifiant, JSON.stringify(etapes));
 	}
 
 	// ajoute le parcours à la commune
 	temp = await AsyncStorage.getItem('commune.' + parcours.commune);
 	if (temp == null) {
-		AsyncStorage.setItem('commune.' + parcours.commune, JSON.stringify([parcours]));
+		await AsyncStorage.setItem('commune.' + parcours.commune, JSON.stringify([parcours]));
 	} else {
 		let ids = JSON.parse(temp);
 		if (ids.find((item) => item.identifiant == parcours.identifiant) == undefined) {
 			ids.push(parcours);
 		}
-		AsyncStorage.setItem('commune.' + parcours.commune, JSON.stringify(ids));
+		await AsyncStorage.setItem('commune.' + parcours.commune, JSON.stringify(ids));
 	}
 	saveGameHistory(parcours, parcours.general.score);
 	return Promise.resolve();
-
 }
 
 export async function telechargerParcours(parcours) {
-	let tmp = NetInfo.fetch()
-	let connexionAvailable;
-	tmp.then((state) => connexionAvailable = state.isInternetReachable)
-	await tmp;
-	if (!connexionAvailable) {
-		return Promise.reject("internet indisponible");
-	}
+	try {
+        const state = await NetInfo.fetch();
+        if (!state.isInternetReachable) {
+            return Promise.reject("Internet connection unavailable");
+        }
+    } catch (error) {
+        return Promise.reject("Error during Internet connection verification");
+    }
 
 	// ajoute la commune aux communes connues en local
 	let temp = await AsyncStorage.getItem('commune');
 	if (temp == null) {
-		AsyncStorage.setItem('commune', JSON.stringify([parcours.commune]));
+		await AsyncStorage.setItem('commune', JSON.stringify([parcours.commune]));
 	} else {
 		let communes = JSON.parse(temp);
-		if (communes.find((item) => item == parcours.commune) === undefined) {
+		if (!communes.includes(parcours.commune)) {
 			communes.push(parcours.commune);
-			AsyncStorage.setItem('commune', JSON.stringify(communes));
+			await AsyncStorage.setItem('commune', JSON.stringify(communes));
 		}
 	}
 
@@ -85,22 +86,22 @@ export async function telechargerParcours(parcours) {
 			return Promise.reject("Couldn't get parcours from fireBase");
 		}
 		etapes.general.length = etapes.etapes.length;
-		saveObject(parcours.identifiant, JSON.stringify(etapes));
+		await (parcours.identifiant, JSON.stringify(etapes));
 	}
 
 	// ajoute le parcours à la commune
 	temp = await AsyncStorage.getItem('commune.' + parcours.commune);
-	if (temp == null) {
-		AsyncStorage.setItem('commune.' + parcours.commune, JSON.stringify([parcours]));
+	if (temp === null) {
+		await AsyncStorage.setItem('commune.' + parcours.commune, JSON.stringify([parcours]));
 	} else {
-		let ids = JSON.parse(temp);
-		if (ids.find((item) => item.identifiant == parcours.identifiant) == undefined) {
-			ids.push(parcours);
+		const parcoursIds = JSON.parse(temp);
+		if (!parcoursIds.find(item => item.identifiant === parcours.identifiant)) {
+			parcoursIds.push(parcours);
+			await AsyncStorage.setItem('commune.' + parcours.commune, JSON.stringify(parcoursIds));
 		}
-		AsyncStorage.setItem('commune.' + parcours.commune, JSON.stringify(ids));
 	}
-	return Promise.resolve();
 
+	return Promise.resolve();
 }
 
 export async function saveGameHistory(parcours, myscore) {
@@ -118,18 +119,16 @@ export async function saveGameHistory(parcours, myscore) {
 	});
 
 	// Sauvegarde de l'historique mis à jour
-	AsyncStorage.setItem('gameHistory', JSON.stringify(history));
+	await AsyncStorage.setItem('gameHistory', JSON.stringify(history));
 }
 
 /**
- * sauvegarde un objet en la découpant en plusieurs morceau pour ne pas
- * dépasser la taille limite de 2Mo par objets stocké
+ * Sauvegarde un objet en le découpant en plusieurs morceaux pour ne pas
+ * dépasser la taille limite de 2Mo par objet stocké
  * @param {String} key 
  * @param {String} object 
  */
-export function saveObject(key, object) {
-
-
+export async function saveObject(key, object) {
 	// Base64-encoded data -> str.length = espace occuper par l'objet en Mo
 	const cutSize = 1000000;
 	let nbCuts = Math.ceil(object.length / cutSize);
@@ -141,7 +140,7 @@ export function saveObject(key, object) {
 	}
 
 	// stockage
-	AsyncStorage.setItem(key, nbCuts.toString())
-	AsyncStorage.multiSet(cuts);
+	await AsyncStorage.setItem(key, nbCuts.toString())
+	await AsyncStorage.multiSet(cuts);
 }
 

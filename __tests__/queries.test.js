@@ -17,7 +17,7 @@ test("Get all parcours from commune", async () => {
 })
 
 test("Get parcours content from id", async () => {
-    const id = "V4gp7A6yWUAxcaPWnqc6" //Saint-Etienne
+    const id = "V4gp7A6yWUAxcaPWnqc6" // Saint-Étienne
     const res = await getParcoursContents(id);
     console.log(res);
 })

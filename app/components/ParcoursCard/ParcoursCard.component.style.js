@@ -19,10 +19,10 @@ export default StyleSheet.create({
 	imagecontainer: {
 		width: 200,
 		height: 200,
+		marginBottom: 15,
 		resizeMode: 'contain',
 		alignSelf: 'center',
 	},
-
 	bouton: {
 		...common.bouton,
 		paddingHorizontal: 0,
@@ -40,7 +40,6 @@ export default StyleSheet.create({
 		...common.boutonText,
 		flexGrow: 1,
 		textAlignVertical: 'center',
-
 	},
 	rowFlex: {
 		flex: 1,

@@ -32,7 +32,7 @@ class SearchCommune extends Component {
                 </View>
                 <View style={styles.parcoursSeparator}>
                     <FlatList
-                        data={filteredDataSource} //Communes affichée en résultat de recherche
+                        data={filteredDataSource} // Communes affichées en résultat de recherche
                         keyExtractor={(item, index) => index.toString()}
                         ItemSeparatorComponent={() => { return (<View style={styles.parcoursSeparator} />) }}
                         style={styles.searchStyle}
@@ -57,19 +57,19 @@ class SearchCommune extends Component {
 
 // Filtre le nom de commune retourné
 const searchFilterFunction = (text, props) => {
-    if (text) { // Pas vide
+    if (text) {
         const newData = props.allDataSource.filter(function (item) {
             const itemData = item
                 ? NormalizeStrings(item).replace('ST', 'SAINT')
                 : ''.toUpperCase(); // Rend insensible à la casse
             const textData = NormalizeStrings(text).replace('ST', 'SAINT');
             return itemData.indexOf(textData) > -1;
-        }).filter((item, i) => (i < 20)); // Limite du nombre de commune afficher en même temps "filtrée"
+        }).filter((item, i) => (i < 20)); // Limite du nombre de commune affichées en même temps "filtrées"
         props.setFilteredDataSource(newData); // Applique le filtre
-        props.setSearch(text); // Rempli le champs
-    } else {//vide
-        props.setFilteredDataSource(props.allDataSource); //réaffiche toute les communes
-        props.setSearch(text); // Rempli le champs
+        props.setSearch(text); // Remplit le champs
+    } else {
+        props.setFilteredDataSource(props.allDataSource); // Réaffiche toute les communes
+        props.setSearch(text); // Remplit le champ
     }
 };
 
@@ -89,7 +89,6 @@ export default function (props) {
 
     // vérifie la connection à internet
     useEffect(() => {
-
         const checkInternetAvailability = async () => {
             const netInfoState = await NetInfo.fetch();
             if (netInfoState.isInternetReachable != internetAvailable) {
@@ -116,7 +115,7 @@ export default function (props) {
             temp = await getAllCommunes();
         }
         if (temp == undefined || temp.length == 0) {
-            // si on n'a pas accès à la firebase, on regarde les communes disponible en local
+            // si on n'a pas accès à la firebase, on regarde les communes disponibles en local
             temp = await AsyncStorage.getItem('commune');
             temp = (temp == null) ? new Array() : JSON.parse(temp);
         }
@@ -130,8 +129,6 @@ export default function (props) {
     useEffect(() => {
         chargeCommunes();
     }, [internetAvailable])
-
-
 
     // wrapper du component dans une fonction
     return <SearchCommune {...props}

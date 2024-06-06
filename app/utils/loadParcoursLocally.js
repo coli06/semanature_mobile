@@ -13,22 +13,26 @@ export async function getParcoursFromCommuneLocally(cityName) {
  */
 export default async function loadParcoursLocally(identifiant) {
 	console.log("load the id " + identifiant);
-	let temp = await loadObject(identifiant);
-	if (temp != "") {
-		return JSON.parse(await loadObject(identifiant));
-	} else {
-		return null;
+	try {
+		let temp = await loadObject(identifiant);
+		if (temp != "") {
+			return JSON.parse(temp);
+		} else {
+			return null;
+		}
+	} catch (error) {
+		console.error("Error while loading parcours :", error);
 	}
 }
 
 /**
- * Récuère un objet du stockage
+ * Récupère un objet du stockage
  * @param {String} key 
  * @returns String
  */
 async function loadObject(key) {
 
-	// Base64-encoded data -> str.length = espace occuper par l'objet en Mo
+	// Base64-encoded data -> str.length = espace occupé par l'objet en Mo
 	const cutSize = 1000000;
 	let nbCuts = parseInt(await AsyncStorage.getItem(key));
 

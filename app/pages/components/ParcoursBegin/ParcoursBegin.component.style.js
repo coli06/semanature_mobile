@@ -5,12 +5,15 @@ export default StyleSheet.create({
     title: {
         ...common.title,
     },
+
     card: {
         ...common.cardBegin,
     },
+
     description: {
         ...common.description,
     },
+
     bouton: {
         ...common.bouton,
     },
@@ -21,16 +24,22 @@ export default StyleSheet.create({
         height:50,
 		alignSelf: 'center',
 	},
+
     globalContainer: {
-        ...common.globalContainer
+        ...common.globalContainer,
     },
+
     outsideSafeArea: {
         ...common.outsideSafeArea,
     },
+
     image: {
         resizeMode: 'contain',
         height:260,
         width : "100%",
     },
 
+    activityIndicator: {
+        ...common.activityIndicator,
+    }
 })
