@@ -54,11 +54,7 @@ const ParcoursCard = (props) => {
     },[])
 
 
-    const commune = props.parcours.commune;
-    const difficulte = props.parcours.difficulte;
-    const duree = props.parcours.duree;
-    const description = props.parcours.description;
-    const id = props.parcours.identifiant;
+    const { commune, difficulte, duree, description, identifiant } = props.parcours;
     const internetAvailable = props.internetAvailable;
 
     return (
@@ -76,16 +72,9 @@ const ParcoursCard = (props) => {
             <View style={styles.rowFlex}>
                 <TouchableOpacity
                     onPress={() => {
-                        if (props.dataLoaded) {
                             setLoadingChoix(true);
-                            props.navigation.navigate("ParcoursBeginPage", { identifiant: id });
-                        } else if (internetAvailable) {
-                            setLoadingChoix(true);
-                            telechargerParcours(props.parcours).then(() => {
-                                props.navigation.navigate("ParcoursBeginPage", { identifiant: id });
-                            });
-                        }
-                    }}
+                            props.navigation.navigate("ParcoursBeginPage", { identifiant: identifiant });
+                        }}
                     style={styles.bouton2}
                 >
                     {loadingChoix ? ( // Affichage du loader si l'état 'loading_choix' est vrai

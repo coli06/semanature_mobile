@@ -69,12 +69,11 @@ class CodeCesar extends Component {
   render() {
     const question = this.props.currentGame.question;
     const title = this.props.currentGame.nom;
-    const { communesData } = this.state;
-    const maxEtape = communesData ?? "-";
-    if (maxEtape.max_etape === undefined) {
-      var TopBarreName = "";
+    const etapeMax = this.props.parcours.etape_max;
+    if (etapeMax === undefined) {
+        var TopBarreName = "";
     } else {
-      var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + maxEtape.max_etape;
+        var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
     }
 
     const icone = require('./../../../assets/code_cesar_icone.png');

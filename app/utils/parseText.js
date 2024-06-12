@@ -2,7 +2,7 @@ import { Text, TouchableOpacity, Linking } from 'react-native';
 
 /**
 * Cette fonction permet de remplacer dans un texte en entrée les liens 
-* de la forme [[lien|alias]] en <a href="...">alias</a>. 
+* de la forme [[lien|alias]] en <a href=lien>alias</a>. 
 * 
 * @param text le texte brut
 * @returns le texte modifié avec les liens transformés

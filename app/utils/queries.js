@@ -5,23 +5,29 @@ import { Alert } from 'react-native';
 
 //Return commune names in an array that match with 'cityName'
 export async function searchAndGetCommunes(cityName) {
-	const communes = [];
+  const communes = [];
 
-	// Get collection reference
-	const communeCollectionRef = collection(db, 'commune');
+  try {
+    // Get collection reference
+    const communeCollectionRef = collection(db, 'commune');
 
-	// Create query (filter)
-	const q = query(communeCollectionRef, where("nom", "==", cityName));
+    // Create query (filter)
+    const q = query(communeCollectionRef, where("nom", "==", cityName));
 
-	const querySnapshot = await getDocs(q);
-	querySnapshot.forEach((doc) => {
-		co = {
-			nom: doc.data().nom,
-			code_postal: doc.data().code_postal
-		}
-		communes.push(co);
-	});
-	return communes;
+    // Execute query
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      const commune = {
+        nom: doc.data().nom,
+        code_postal: doc.data().code_postal
+      };
+      communes.push(commune);
+    });
+  } catch (error) {
+    console.error("Error fetching communes:", error);
+  }
+
+  return communes;
 }
 
 // Return all communes that exist in database
@@ -86,82 +92,91 @@ export async function getParcoursFromCommune(cityName) {
 //      { id_etape: '0uXCxTBra7nBKQzc6jfB', etape : [Object (variable)] }, { id_etape: "Vv87ssNMTcsel1ytMUVU", etape : [Object (variable)] }, ...
 //   ]
 // }
-// If the parcours doesnt exist : Output : {}
+// If the parcours does not exist : Output : {}
 export async function getParcoursContents(id) {
+	console.log("Et un fetch firebase de plus...");
 
-	if (await checkQueryQuota(40, 50) == "block") {
-		return {};
-	}
-
-	const docRefParcours = doc(db, "parcours", id);
-	const docSnap = await getDoc(docRefParcours);
-	const pathSubColEtape = "/parcours/" + docSnap.id + "/etape";
-	const res = {};
-
-	if (docSnap.exists()) {
-
-		// Get general parcours info
-		const generalInfo = {
-			commune: docSnap.data().commune,
-			titre: docSnap.data().titre,
-			description: docSnap.data().description,
-			max_etape: docSnap.data().etape_max
+	try {
+		if (await checkQueryQuota(40, 50) == "block") {
+			return {};
 		}
 
-		res.general = generalInfo;
+		const docRefParcours = doc(db, "parcours", id);
+		const docSnap = await getDoc(docRefParcours);
+		const pathSubColEtape = "/parcours/" + docSnap.id + "/etape";
+		const res = {};
 
-		// Get all docs at pathSubColEtape
-		const querySnapshot = await getDocs(collection(db, pathSubColEtape));
-		const subColRes = [];
+		if (docSnap.exists()) {
 
-		// Iterate through the documents fetched
-		await Promise.all(querySnapshot.docs.map(async (queryDocumentSnapshot) => {
-
-			var etapeInfo =
-			{
-				id_etape: queryDocumentSnapshot.id,
-				etape: queryDocumentSnapshot.data()
+			// Get general parcours info
+			const generalInfo = {
+				commune: docSnap.data().commune,
+				titre: docSnap.data().titre,
+				description: docSnap.data().description,
+				etape_max: docSnap.data().etape_max
 			}
-			if (etapeInfo.etape.image_url != null && etapeInfo.etape.image_url != "") {
-				etapeInfo.etape.image_url = await getDataURLFromURL(etapeInfo.etape.image_url);
-			}
-			if (etapeInfo.etape.images_tab != null) {
-				for (var i = 0; i < etapeInfo.etape.images_tab.length; i++) {
-					etapeInfo.etape.images_tab[i] = await getDataURLFromURL(etapeInfo.etape.images_tab[i]);
+
+			res.general = generalInfo;
+
+			// Get all docs at pathSubColEtape
+			const querySnapshot = await getDocs(collection(db, pathSubColEtape));
+			const subColRes = [];
+
+			// Iterate through the documents fetched
+			await Promise.all(querySnapshot.docs.map(async (queryDocumentSnapshot) => {
+
+				var etapeInfo = {
+					id_etape: queryDocumentSnapshot.id,
+					etape: queryDocumentSnapshot.data()
 				}
-			}
+				if (etapeInfo.etape.image_url && etapeInfo.etape.image_url != "") {
+					etapeInfo.etape.image_url = await getDataURLFromURL(etapeInfo.etape.image_url);
+				}
+				if (etapeInfo.etape.images_tab) {
+					for (var i = 0; i < etapeInfo.etape.images_tab.length; i++) {
+						etapeInfo.etape.images_tab[i] = await getDataURLFromURL(etapeInfo.etape.images_tab[i]);
+					}
+				}
 
-			subColRes.push(etapeInfo);
-		}))
+				subColRes.push(etapeInfo);
+			}))
 
-		res.etapes = subColRes;
+			res.etapes = subColRes;
+			
+		} else {
+			// docSnap.data() will be undefined in this case
+			console.log("No such document !");
+		}
 
 		return res;
-	} else {
-		// docSnap.data() will be undefined in this case
-		console.log("No such document!");
-	}
 
-	return res;
+	} catch (error) {
+		console.error("Error getting parcours contents: ", error);
+		return { error: "An error occurred while fetching parcours contents." };
+	}
 }
 
 async function getDataURLFromURL(url) {
-	return new Promise(function (resolve, reject) {
-		const xhr = new XMLHttpRequest();
-		xhr.responseType = 'blob';
-		xhr.onload = (event) => {
-			const blob = xhr.response;
-			var reader = new FileReader();
-			reader.readAsDataURL(blob);
-			reader.onloadend = function () {
-				let res = reader.result;
-				resolve(res);
-			}
-		};
-		xhr.open('GET', url);
-		xhr.send();
-	})
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch resource: ${response.status} ${response.statusText}`);
+        }
+
+        const blob = await response.blob();
+        return await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error("Failed to read Blob as Data URL"));
+            reader.readAsDataURL(blob);
+        });
+    } catch (error) {
+        console.error("Error in getDataURLFromURL:", error);
+        throw error;
+    }
 }
+
+
 
 /**
  * Vérifie si le quota de requête du jour a été dépassé, et incrémente le nombre enregistré

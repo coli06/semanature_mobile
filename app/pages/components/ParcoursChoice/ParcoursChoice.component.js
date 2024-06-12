@@ -47,7 +47,7 @@ class ParcoursChoice extends Component {
             );
 
         }
-        // S'il y a des parcours disponibles, on les affiches dans une liste défilante.
+        // S'il y a des parcours disponibles, on les affiche dans une liste défilante.
         else {
             return (
                 <SafeAreaView style={styles.outsideSafeArea}>
@@ -127,7 +127,6 @@ export default function (props) {
             temp = await getParcoursFromCommune(commune);
         }
         if (temp == undefined || temp.length == 0) {
-
             temp = await getParcoursFromCommuneLocally(commune);
         }
         temp.sort((item1, item2) => {
@@ -140,8 +139,7 @@ export default function (props) {
                 return 1;
             }
             return 0;
-        })
-        
+        })        
 
         setAllDataSource(temp);
         setLoading(false);

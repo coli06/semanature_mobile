@@ -11,11 +11,13 @@ class ParcoursBeginPage extends Component {
         return (
             <View style={styles.homestyle}>
                 <ParcoursBegin
-                    identifiant={this.props.route.params.identifiant} />
+                    identifiant={this.props.route.params.identifiant}
+                />
             </View>
         );
     }
 }
+
 const styles = StyleSheet.create({
     homestyle: {
         flex: 1,

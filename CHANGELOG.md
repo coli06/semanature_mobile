@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 ### Added
 
 - topbarre text centered
+- security enhancement for firebase keys & IDs
 
 ### Changed
 

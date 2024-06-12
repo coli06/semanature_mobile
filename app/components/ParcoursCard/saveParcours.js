@@ -3,7 +3,7 @@ import { getParcoursContents } from "../../utils/queries";
 import NetInfo from "@react-native-community/netinfo";
 
 /**
- * sauvegarde le parcours en local si nécaissaire
+ * sauvegarde le parcours en local si nécéssaire
  * @param {*} parcours 
  */
 export default async function saveParcours(parcours) {
@@ -86,7 +86,7 @@ export async function telechargerParcours(parcours) {
 			return Promise.reject("Couldn't get parcours from fireBase");
 		}
 		etapes.general.length = etapes.etapes.length;
-		await (parcours.identifiant, JSON.stringify(etapes));
+		await saveObject(parcours.identifiant, JSON.stringify(etapes));
 	}
 
 	// ajoute le parcours à la commune

@@ -54,15 +54,14 @@ class CompterImage extends Component {
 
     render() {
         const result = this.props.currentGame.reponse;
-        const { communesData } = this.state;
         const paragraph = this.props.currentGame.texte;
         const title = this.props.currentGame.nom;
-        const maxEtape = communesData ?? "-";
-        if (maxEtape.max_etape === undefined)
+        const etapeMax = this.props.parcours.etape_max;
+        if (etapeMax === undefined) {
             var TopBarreName = "";
-        else
-            var TopBarreName = "Etape : " + this.props.currentGame.n_etape + "/" + maxEtape.max_etape;
-
+        } else {
+            var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+        }
         const icone = require('./../../../assets/compter_image_icone.png');
 
         return (

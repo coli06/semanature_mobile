@@ -60,27 +60,26 @@ class GameOutcome extends Component {
       this.props.parcours[this.props.parcours.length - 1].score++;
     }
 
-        return (
-            <SafeAreaView style={styles.outsideSafeArea}>
-                <TopBarre name={TopBarreName} />
-                <View style={styles.globalContainer}>
-                    <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
-                        <View style={common.card}>
-                            {(win == 1) && (
-                                <Text style={common.title}>{winText}</Text>
-                            )}
-                            {(win != 1) && (
-                                <Text style={common.title}>{loseText}</Text>
-                            )}
-                            {(illustration != '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
-                            <Text style={common.description}>{paragraph}</Text>
-                        </View>
-                        <NextPage pageName="GamePage" parameters={{ parcours: this.props.parcours }}></NextPage>
-                    </ScrollView>
-                </View>
-            </SafeAreaView>
-        );
-    }
+    return (
+        <SafeAreaView style={styles.outsideSafeArea}>
+            <TopBarre name={TopBarreName} />
+            <View style={styles.globalContainer}>
+                <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
+                    <View style={common.card}>
+                        {(win == 1) && (
+                            <Text style={common.title}>{winText}</Text>
+                        )}
+                        {(win != 1) && (
+                            <Text style={common.title}>{loseText}</Text>
+                        )}
+                        {(illustration != '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
+                        <Text style={common.description}>{paragraph}</Text>
+                    </View>
+                    <NextPage pageName="GamePage" parameters={{ parcours: this.props.parcours }}></NextPage>
+                </ScrollView>
+            </View>
+        </SafeAreaView>
+    )}
 }
 
 export default function (props) {

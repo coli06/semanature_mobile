@@ -24,13 +24,13 @@ class Charade extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.fetchCommunesData(parcours[size-1].parcoursId)
+        /* this.fetchCommunesData(parcours[size-1].parcoursId)
             .then(communesData => {
                 this.setState({ communesData });
             })
             .catch(error => {
                 console.error('Error fetching communes data:', error);
-            });
+            });*/
     }
     fetchCommunesData(id) {
         return getParcoursContents(id)
@@ -54,13 +54,12 @@ class Charade extends Component {
     handleInputTextChange = (input) => this.setState({ proposition: input }) // Proposition de l'utilisateur
 
     render() {
-        const { communesData } = this.state;
         const paragraph = this.props.currentGame.texte;
-        const maxEtape = communesData ?? "-";
-        if (maxEtape.max_etape === undefined) {
+        const etapeMax = this.props.parcours.etape_max;
+        if (etapeMax === undefined) {
             var TopBarreName = "";
         } else {
-            var TopBarreName = "Etape : " + this.props.currentGame.n_etape + "/" + maxEtape.max_etape;
+            var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
         }
 
         const charade = this.props.currentGame.charade;
@@ -68,12 +67,6 @@ class Charade extends Component {
         const title = this.props.currentGame.nom;
         const illustration = this.props.currentGame.image_url
         console.log(this.props.parcours.size);
-        let tab = [];
-        for (let etape of this.props.parcours) {
-            tab.push(etape.n_etape);
-        }
-        tab = new Set(tab);
-        tab = Array.from(tab);
         const icone = require('./../../../assets/charade_icone.png');
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
@@ -95,9 +88,6 @@ class Charade extends Component {
                                 text="Valider"
                                 blockButton={true}
                             />
-                        </View>
-                        <View>
-
                         </View>
                     </ScrollView>
                 </View>

@@ -29,13 +29,13 @@ class Pyramid extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.fetchCommunesData(parcours[size-1].parcoursId)
+        /* this.fetchCommunesData(parcours[size-1].parcoursId)
             .then(communesData => {
                 this.setState({ communesData });
             })
             .catch(error => {
                 console.error('Error fetching communes data:', error);
-            });
+            }); */
     }
     fetchCommunesData(id) {
         return getParcoursContents(id)
@@ -67,13 +67,13 @@ class Pyramid extends Component {
     const title = this.props.currentGame.nom;
     const result = this.props.currentGame.nombre;
     const illustration = this.props.currentGame.image_url;
-    const { communesData } = this.state;
-    const maxEtape = communesData ?? "-";
-    if (maxEtape.max_etape === undefined)
-      var TopBarreName = "";
-    else
-      var TopBarreName = "Etape : " + this.props.currentGame.n_etape + "/" + maxEtape.max_etape;
-    const textRegles = "Règle : Remplir la pyramide jusqu'en bas selon le principe suivant : chaque case vide doit contenir la somme des deux cases qui se trouvent au-dessus"
+    const etapeMax = this.props.parcours.etape_max;
+    if (etapeMax === undefined) {
+        var TopBarreName = "";
+    } else {
+        var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+    }
+    const textRegles = "Remplir la pyramide jusqu'en bas selon le principe suivant : chaque case vide doit contenir la somme des deux cases qui se trouvent au-dessus"
     const icone = require('./../../../assets/calcul_pyramidal_icone.png');
 
         return (

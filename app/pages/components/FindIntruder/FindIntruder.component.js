@@ -22,13 +22,13 @@ class FindIntruder extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.fetchCommunesData(parcours[size-1].parcoursId)
+        /* this.fetchCommunesData(parcours[size-1].parcoursId)
             .then(communesData => {
                 this.setState({ communesData });
             })
             .catch(error => {
                 console.error('Error fetching communes data:', error);
-            });
+            }); */
     }
     fetchCommunesData(id) {
         return getParcoursContents(id)
@@ -57,17 +57,14 @@ class FindIntruder extends Component {
     }
 
     render() {
-        const { communesData } = this.state;
-        const paragraph = this.props.currentGame.texte;
-        const illustration = this.props.currentGame.image_url;
-        const maxEtape = communesData ?? "-";
-        if (maxEtape.max_etape === undefined)
+        const etapeMax = this.props.parcours.etape_max;
+        if (etapeMax === undefined) {
             var TopBarreName = "";
-        else
-            var TopBarreName = "Etape : " + this.props.currentGame.n_etape + "/" + maxEtape.max_etape;
-
+        } else {
+            var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+        }
         const title = this.currentGame.nom;
-        // On affiche dans un premier temps la barre du haut (logo LPO + nom page +log SEM engagée)
+        // On affiche dans un premier temps la barre du haut (logo LPO + nom page)
         // Ensuite on affiche le titre, la description, et deux lignes avec sur chaque ligne une image qui est aussi un bouton. C'est sur l'image intrus
         // qu'il va falloir cliquer
         const icone = require('./../../../assets/trouver_l_intrus_icone.png');

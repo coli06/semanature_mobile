@@ -31,20 +31,9 @@ class NextPage extends Component {
     }
 
     render() {
-
-        // objet pour changer de page
-        const navigation = this.props.navigation;
-
-        // parametres du bouton
-        const pageName = this.props.pageName;
-        const parameters = this.props.parameters;
-        var blockButton = this.props.blockButton;
-        let text = this.props.text;
-
-        // valeur par défaut
-        if (text == undefined) {
-            text = 'Page suivante';
-        }
+        
+        // arguments de construction
+        const { navigation, pageName, parameters, blockButton, text = 'Page suivante' } = this.props;
 
         // affichage
         return (

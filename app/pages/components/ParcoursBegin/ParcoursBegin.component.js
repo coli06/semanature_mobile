@@ -66,9 +66,8 @@ export default function (props) {
             setIsInit(true);
             setGeneralData(temp.general);
             setEtapesData(temp.etapes);
-            //console.log(temp.etapes)
         }
         loadParcours();
     }, [])
-    return <ParcoursBegin {...props} generalData={generalData} setGeneralData={setGeneralData} etapesData={etapesData} setEtapesDataa={setEtapesData} navigation={navigation} isInit={isInit} />;
+    return <ParcoursBegin {...props} generalData={generalData} etapesData={etapesData} navigation={navigation} isInit={isInit} />;
 }

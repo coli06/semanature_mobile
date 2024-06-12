@@ -23,7 +23,6 @@ class FindSilhouette extends Component {
         return true;
     }
 
-
     currentGame = this.props.currentGame;
 
     handleConfirmClicked = () => {

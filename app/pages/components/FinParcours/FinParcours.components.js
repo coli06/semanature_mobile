@@ -58,7 +58,7 @@ class FinParcoursPage extends Component {
         const score = this.props.currentGame.score;
         const scoremax = this.props.currentGame.score_max
         const parcoursId = this.props.currentGame.parcoursId
-        const title = "Félicitation !"
+        const title = "Félicitations !"
         let txt = "Vous avez obtenu " + score + " sur " + scoremax;
 
         // affichage de la page

@@ -31,13 +31,13 @@ class TransitionInfo extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.fetchCommunesData(parcours[size-1].parcoursId)
+        /* this.fetchCommunesData(parcours[size-1].parcoursId)
             .then(communesData => {
                 this.setState({ communesData });
             })
             .catch(error => {
                 console.error('Error fetching communes data:', error);
-            });
+            }); */
     }
     fetchCommunesData(id) {
         return getParcoursContents(id)
@@ -56,18 +56,17 @@ class TransitionInfo extends Component {
         return true;
     }
 
-
     render() {
-        const { communesData } = this.state;
         const paragraph = parseText(this.props.currentGame.texte);
         const title = this.props.currentGame.nom;
         const illustration = this.props.currentGame.image_url;
-        const maxEtape = communesData ?? "-";
-        if (maxEtape.max_etape === undefined)
+        const etapeMax = this.props.parcours.etape_max;
+        if (etapeMax === undefined) {
             var TopBarreName = "";
-        else
-            var TopBarreName = "Etape : " + this.props.currentGame.n_etape + "/" + maxEtape.max_etape;
-
+        } else {
+            var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+        }
+        console.log(etapeMax);
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
                 <TopBarre name={TopBarreName} />
