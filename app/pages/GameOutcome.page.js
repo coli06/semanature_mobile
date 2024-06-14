@@ -9,6 +9,7 @@ class GameOutcomePage extends Component {
     render() {
         return (
             <GameOutcome
+                parcoursInfo={this.props.route.params.parcoursInfo}
                 parcours={this.props.route.params.parcours}
                 currentGame={this.props.route.params.currentGame}
                 win={this.props.route.params.win}

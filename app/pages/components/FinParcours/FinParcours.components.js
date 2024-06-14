@@ -20,7 +20,7 @@ class FinParcoursPage extends Component {
         const scoremax = this.props.currentGame.score_max
         const parcoursId = this.props.currentGame.parcoursId
 
-        // sauvegarde du score (et du scoremax si pas encore sauvegardé)
+        // sauvegarde du score (et du score max si pas encore sauvegardé)
         let promise = loadParcoursLocally(parcoursId);
         promise.then((Parcours) => {
             if (Parcours == null) {
@@ -46,9 +46,11 @@ class FinParcoursPage extends Component {
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+    
     handleBackButtonClick() {
         return true;
     }
@@ -58,7 +60,7 @@ class FinParcoursPage extends Component {
         const score = this.props.currentGame.score;
         const scoremax = this.props.currentGame.score_max
         const parcoursId = this.props.currentGame.parcoursId
-        const title = "Félicitation !"
+        const title = "Félicitations !"
         let txt = "Vous avez obtenu " + score + " sur " + scoremax;
 
         // affichage de la page
@@ -80,7 +82,7 @@ class FinParcoursPage extends Component {
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => Linking.openURL('https://engageepourlanature.saint-etienne-metropole.fr/citoyens/ ')}>
                                 <Text style={styles.links}>
-                                    Saint-Etienne métropole engagée pour la nature
+                                    Saint-Étienne Métropole engagée pour la nature
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => Linking.openURL('https://www.ofb.gouv.fr/grand-public-et-citoyens')}>

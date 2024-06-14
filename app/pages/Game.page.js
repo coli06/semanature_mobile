@@ -10,6 +10,7 @@ class GamePage extends Component {
     render() {
         return (
             <GamePageComponent
+                parcoursInfo={this.props.route.params.parcoursInfo}
                 parcours={this.props.route.params.parcours}
                 parcoursId={this.props.route.params.parcoursId}
             />

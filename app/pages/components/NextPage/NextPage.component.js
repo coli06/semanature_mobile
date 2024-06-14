@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from './NextPage.component.style';
-
 import { useNavigation } from '@react-navigation/native';
 
 /** 
@@ -10,12 +9,13 @@ import { useNavigation } from '@react-navigation/native';
  * Pour créer une page :
  * - Ajoutez une page dans la fonction HomeStack de navigation
  * - Instanciez un composant NextPage comme cela :
- *  \<NextPage
- *        pageName = nomDeLaPageAAjouter
+ *  <NextPage
+ *        pageName = nomDeLaPageÀAjouter
  *        parameters = {varName:varValue}
  *        text = textAEcrireSurLeBouton
  *  />
 */
+
 class NextPage extends Component {
     constructor(props) {
         super(props);
@@ -30,20 +30,9 @@ class NextPage extends Component {
     }
 
     render() {
-
-        // objet pour changer de page
-        const navigation = this.props.navigation;
-
-        // parametres du bouton
-        const pageName = this.props.pageName;
-        const parameters = this.props.parameters;
-        var blockButton = this.props.blockButton;
-        let text = this.props.text;
-
-        // valeur par défaut
-        if (text == undefined) {
-            text = 'Page suivante';
-        }
+        
+        // arguments de construction
+        const { navigation, pageName, parameters, blockButton, text = 'Page suivante' } = this.props;
 
         // affichage
         return (
@@ -63,16 +52,6 @@ class NextPage extends Component {
     }
 }
 
-/** 
- * Pour créer une page :
- * - Ajoutez une page dans la fonction HomeStack de navigation
- * - Instanciez un composant NextPage comme cela :
- *  \<NextPage
- *        pageName = nomDeLaPageAAjouter
- *        parameters = {varName:varValue}
- *        text = textAEcrireSurLeBouton
- *  />
-*/
 export default function (props) {
     const navigation = useNavigation();
     return <NextPage {...props} navigation={navigation} />;

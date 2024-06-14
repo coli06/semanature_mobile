@@ -6,9 +6,9 @@ class MainTitle extends Component {
 	constructor(props) {
 		super(props);
 	}
+
 	render() {
-		const { title } = this.props
-		const { icone } = this.props
+		const { title, icone } = this.props
 		return (
 			<View style={{ flexDirection: 'row' }}>
 				<Text style={styles.title}>{title}</Text>

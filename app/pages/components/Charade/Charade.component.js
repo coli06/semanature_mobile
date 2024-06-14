@@ -14,7 +14,6 @@ class Charade extends Component {
         super(props);
         this.state = {
             proposition: "",
-            communesData: null
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
@@ -24,27 +23,12 @@ class Charade extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.fetchCommunesData(parcours[size-1].parcoursId)
-            .then(communesData => {
-                this.setState({ communesData });
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-            });
     }
-    fetchCommunesData(id) {
-        return getParcoursContents(id)
-            .then(communesData => {
-                return communesData.general;
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-                return null; // or some default value if an error occurs
-            });
-    }
+
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+
     handleBackButtonClick() {
         return true;
     }
@@ -52,31 +36,23 @@ class Charade extends Component {
     handleInputTextChange = (input) => this.setState({ proposition: input }) // Proposition de l'utilisateur
 
     render() {
-
-        const { communesData } = this.state;
         const paragraph = this.props.currentGame.texte;
-        const maxEtape = communesData ?? "-";
-        if (maxEtape.max_etape === undefined)
-            var TopBarreName = "";
-        else
-            var TopBarreName = "Etape : " + this.props.currentGame.n_etape + "/" + maxEtape.max_etape;
-
+        const etapeMax = this.props.parcoursInfo.etape_max;
+        if (etapeMax === undefined) {
+            var topBarreName = "";
+        } else {
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+        }
 
         const charade = this.props.currentGame.charade;
         const reponse = NormalizeStrings(this.props.currentGame.reponse);
         const title = this.props.currentGame.nom;
         const illustration = this.props.currentGame.image_url
         console.log(this.props.parcours.size);
-        let tab = [];
-        for (let etape of this.props.parcours) {
-            tab.push(etape.n_etape);
-        }
-        tab = new Set(tab);
-        tab = Array.from(tab);
         const icone = require('./../../../assets/charade_icone.png');
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
-                <TopBarre name={TopBarreName} />
+                <TopBarre name={topBarreName} />
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
@@ -86,17 +62,17 @@ class Charade extends Component {
                             <TextInput style={styles.inputTextField} onChangeText={this.handleInputTextChange} editable={true} placeholder='RÉPONSE' />
                         </View>
                         <View style={styles.rightAlign}>
-                            <NextPage pageName={"GameOutcomePage"}
+                            <NextPage
+                                pageName={"GameOutcomePage"}
                                 parameters={{
-                                    parcours: this.props.parcours, currentGame: this.props.currentGame,
+                                    parcoursInfo: this.props.parcoursInfo,
+                                    parcours: this.props.parcours,
+                                    currentGame: this.props.currentGame,
                                     win: NormalizeStrings(this.state.proposition) == reponse,
                                 }}
                                 text="Valider"
                                 blockButton={true}
                             />
-                        </View>
-                        <View>
-
                         </View>
                     </ScrollView>
                 </View>

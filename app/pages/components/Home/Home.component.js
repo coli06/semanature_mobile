@@ -4,8 +4,6 @@ import styles from './Home.component.style';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native';
-
-
 import TopBarre from './../../../components/TopBarre/TopBarre.component';
 
 class Home extends Component {

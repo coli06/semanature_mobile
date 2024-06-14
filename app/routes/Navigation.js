@@ -35,131 +35,110 @@ import HomeTab from '../pages/components/HomeTab/HomeTab.component.js';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-/** Il s'agit du navigator s'occupant des parcours
- *  Chaque type de page doit y être ajouté si elle intervient dans un parcours
+
+/** Il s'agit du navigateur s'occupant des parcours
+ *  Chaque type de page doit y être ajouté si cette dernière intervient dans un parcours
  * @returns 
  */
+
 function HomeStack() {
 	return (
-		<Stack.Navigator>
+		<Stack.Navigator screenOptions={{ headerShown: false }}>
 			<Stack.Screen
 				name="HomePage"
 				component={HomePage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="SearchCommunePage"
 				component={SearchCommunePage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="PrincipesPage"
 				component={PrincipesPage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="CreditPage"
 				component={CreditPage}
-				options={{ headerShown: false }}
 
 			/>
 			<Stack.Screen
 				name="ParcoursChoicePage"
 				component={ParcoursChoicePage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="GamePage"
 				component={GamePage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="LeSaviezVousPage"
 				component={LeSaviezVousPage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="JokePage"
 				component={JokePage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="FinParcoursPage"
 				component={FinParcoursPage}
-				options={{ headerShown: false }}
 			/>
 
 			<Stack.Screen
 				name="QcmPage"
 				component={QcmPage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="GameOutcomePage"
 				component={GameOutcomePage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="FindIntruderPage"
 				component={FindIntruderPage}
-				options={{ headerShown: false }}
 			/>
 
 			<Stack.Screen
 				name="PyramidPage"
 				component={PyramidPage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="CodeGamePage"
 				component={CodeGamePage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="CodeCesarPage"
 				component={CodeCesarPage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="TransitionGPSPage"
 				component={TransitionGPSPage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="CompterImagePage"
 				component={CompterImagePage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="TransitionInfoPage"
 				component={TransitionInfoPage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="CharadePage"
 				component={CharadePage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="RebusPage"
 				component={RebusPage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="FindSilhouettePage"
 				component={FindSilhouettePage}
-				options={{ headerShown: false }}
 			/>
 			<Stack.Screen
 				name="EcoGestePage"
 				component={EcoGestePage}
-				options={{ headerShown: false }}
 			/>
 
 			<Stack.Screen
 				name="ParcoursBeginPage"
 				component={ParcoursBeginPage}
-				options={{ headerShown: false }}
 			/>
 		</Stack.Navigator>
 

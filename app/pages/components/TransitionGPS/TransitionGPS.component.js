@@ -8,14 +8,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import { parseText } from '../../../utils/parseText';
-import {getParcoursContents} from "../../../utils/queries";
+import { getParcoursContents } from "../../../utils/queries";
 
 class TransitionGPS extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            communesData: null,
-        };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
@@ -24,46 +21,31 @@ class TransitionGPS extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.fetchCommunesData(parcours[size-1].parcoursId)
-            .then(communesData => {
-                this.setState({ communesData });
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-            });
     }
-    fetchCommunesData(id) {
-        return getParcoursContents(id)
-            .then(communesData => {
-                return communesData.general;
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-                return null; // or some default value if an error occurs
-            });
-    }
+
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+
     handleBackButtonClick() {
         return true;
     }
 
     render() {
-        const paragraph = parseText(this.props.currentGame.texte);
-        const { communesData } = this.state;
         const title = this.props.currentGame.nom;
-        const illustration = this.props.currentGame.image_url;
-        const maxEtape = communesData ?? "-";
-        if (maxEtape.max_etape === undefined)
-            var TopBarreName = "";
-        else
-            var TopBarreName = "Etape : " + this.props.currentGame.n_etape + "/" + maxEtape.max_etape;
         const icone = require('./../../../assets/transition_gps_icone.png');
+        const paragraph = parseText(this.props.currentGame.texte);
+        const illustration = this.props.currentGame.image_url;
+        const etapeMax = this.props.parcoursInfo.etape_max;
+        if (etapeMax === undefined) {
+            var topBarreName = "";
+        } else {
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+        }
 
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
-                <TopBarre name={TopBarreName} />
+                <TopBarre name={topBarreName} />
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
@@ -73,7 +55,7 @@ class TransitionGPS extends Component {
                         </View>
                         <NextPage
                             pageName="GamePage"
-                            parameters={{ parcours: this.props.parcours }}
+                            parameters={{ parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours }}
                         />
                     </ScrollView>
                 </View>

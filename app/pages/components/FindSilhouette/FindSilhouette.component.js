@@ -23,7 +23,6 @@ class FindSilhouette extends Component {
         return true;
     }
 
-
     currentGame = this.props.currentGame;
 
     handleConfirmClicked = () => {
@@ -52,7 +51,7 @@ class FindSilhouette extends Component {
                                             if (this.currentGame.index_bonneReponse == 0) {
                                                 win = 1;
                                             }
-                                            this.props.navigation.navigate("GameOutcomePage", { parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
                                         }}>
                                         <View style={styles.imageContainer}>
                                             <Image source={{ uri: this.currentGame.images_tab[0] }} style={styles.image} />
@@ -66,7 +65,7 @@ class FindSilhouette extends Component {
                                             if (this.currentGame.index_bonneReponse == 1) {
                                                 win = 1;
                                             }
-                                            this.props.navigation.navigate("GameOutcomePage", { parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
                                         }}>
                                         <View style={styles.imageContainer}>
                                             <Image source={{ uri: this.currentGame.images_tab[1] }} style={styles.image} />
@@ -82,7 +81,7 @@ class FindSilhouette extends Component {
                                             if (this.currentGame.index_bonneReponse == 2) {
                                                 win = 1;
                                             }
-                                            this.props.navigation.navigate("GameOutcomePage", { parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
                                         }}>
                                         <View style={styles.imageContainer}>
                                             <Image source={{ uri: this.currentGame.images_tab[2] }} style={styles.image} />
@@ -96,7 +95,7 @@ class FindSilhouette extends Component {
                                             if (this.currentGame.index_bonneReponse == 3) {
                                                 win = 1;
                                             }
-                                            this.props.navigation.navigate("GameOutcomePage", { parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
                                         }}>
                                         <View style={styles.imageContainer}>
                                             <Image source={{ uri: this.currentGame.images_tab[3] }} style={styles.image} />

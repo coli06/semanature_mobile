@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import Navigation from './routes/Navigation'
 import { autoSignIn } from './config/firebaseConfig';
-
 
 class LPOMobApp extends Component {
 	render() {
@@ -14,7 +13,11 @@ class LPOMobApp extends Component {
 	}
 }
 
-export default function () {
-	autoSignIn();
-	return <LPOMobApp/>
-}
+const App = () => {
+	useEffect(() => {
+		autoSignIn();
+	}, []);
+	return <LPOMobApp />;
+};
+
+export default App;

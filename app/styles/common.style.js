@@ -8,6 +8,7 @@ export default StyleSheet.create({
 		margin: 10,
 		borderRadius: 30,
 		backgroundColor: theme.PRIMARY_COLOR,
+		alignItems: 'center',
 	},
 
 	boutonText: {
@@ -15,6 +16,10 @@ export default StyleSheet.create({
 		textAlign: 'center',
 		fontSize: theme.FONT_SIZE_LARGE,
 		fontWeight: theme.FONT_WEIGHT_BOLD,
+	},
+
+	activityIndicator: {
+		color: theme.PRIMARY_COLOR,
 	},
 
 	areaImage: {
@@ -148,6 +153,5 @@ export default StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
-
 
 });

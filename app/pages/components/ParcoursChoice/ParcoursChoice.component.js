@@ -9,7 +9,7 @@ import styles from './ParcoursChoice.component.style'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NetInfo from "@react-native-community/netinfo";
 
-/** Composant de recherche de la page de recherche de parcours
+/** Composant de sélection de parcours pour la ville sélectionnée
 */
 class ParcoursChoice extends Component {
     constructor(props) {
@@ -34,7 +34,7 @@ class ParcoursChoice extends Component {
                 </SafeAreaView>
             );
         }
-        //Si il n'y a rien de retourné pour la commune, on affiche un petit message d'erreur
+        //S'il n'y a rien de retourné pour la commune, on affiche un petit message d'erreur
         else if (allDataSource.length == 0) {
             return (
                 <SafeAreaView style={styles.outsideSafeArea}>
@@ -47,7 +47,7 @@ class ParcoursChoice extends Component {
             );
 
         }
-        //S'il y a des parcours disponibles, on les affiches dans une liste défilante.
+        // S'il y a des parcours disponibles, on les affiche dans une liste défilante.
         else {
             return (
                 <SafeAreaView style={styles.outsideSafeArea}>
@@ -79,6 +79,7 @@ export default function (props) {
     const [internetAvailable, setInternetAvailable] = useState(false);
     const [refresh, setRefresh] = useState(true);
     const [loading, setLoading] = useState(true);
+
     let tmp = NetInfo.fetch()
     let lastInternetState = false;
     tmp.then((state) => {
@@ -91,6 +92,27 @@ export default function (props) {
             setInternetAvailable(state.isInternetReachable);
         }
     })
+    
+    /*useEffect(() => {
+        // Function to check initial internet connectivity
+        const checkInitialInternetState = async () => {
+            const netInfoState = await NetInfo.fetch();
+            setInternetAvailable(netInfoState.isInternetReachable);
+        };
+
+        checkInitialInternetState();
+
+        // Subscribe to internet connectivity changes
+        const unsubscribe = NetInfo.addEventListener(state => {
+            if (internetAvailable !== state.isInternetReachable) {
+                setInternetAvailable(state.isInternetReachable);
+            }
+        });
+
+        // Cleanup subscription on component unmount
+        return () => unsubscribe();
+    }, []);*/
+
     async function f() {
         if (internetAvailable == lastInternetState) {
             return;
@@ -105,7 +127,6 @@ export default function (props) {
             temp = await getParcoursFromCommune(commune);
         }
         if (temp == undefined || temp.length == 0) {
-
             temp = await getParcoursFromCommuneLocally(commune);
         }
         temp.sort((item1, item2) => {
@@ -118,8 +139,7 @@ export default function (props) {
                 return 1;
             }
             return 0;
-        })
-        
+        })        
 
         setAllDataSource(temp);
         setLoading(false);
