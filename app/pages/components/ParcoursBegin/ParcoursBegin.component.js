@@ -19,7 +19,7 @@ class ParcoursBegin extends Component {
     render() {
         const imageWidth = windowWidth * 0.8; // 80% of the window width
         const identifiant = this.props.identifiant;
-        const generalData = this.props.generalData;
+        const parcoursInfo = this.props.parcoursInfo;
         const etapesData = this.props.etapesData;
         const parcoursEtapes = [];
         etapesData.forEach((element) => {
@@ -41,9 +41,9 @@ class ParcoursBegin extends Component {
                     </View>
 
                     {!this.props.isInit ? ( // Affiche le loader si l'état 'loading' est vrai
-                            <ActivityIndicator size="large" color={styles.activityIndicator.color} />
+                        <ActivityIndicator size="large" color={styles.activityIndicator.color} />
                     ) : (
-                        <NextPage pageName="GamePage" parameters={{ parcours: parcoursEtapes, parcoursId: identifiant }} blockButton={true} text="Commencer" />
+                        <NextPage pageName="GamePage" parameters={{ parcoursInfo: parcoursInfo, parcours: parcoursEtapes, parcoursId: identifiant }} blockButton={true} text="Commencer" />
                     )}
                 </View>
             </SafeAreaView>
@@ -54,7 +54,7 @@ class ParcoursBegin extends Component {
 export default function (props) {
     const navigation = useNavigation();
     const identifiant = props.identifiant;
-    const [generalData, setGeneralData] = useState([]);
+    const [parcoursInfo, setParcoursInfo] = useState([]);
     const [etapesData, setEtapesData] = useState([]);
     const [isInit, setIsInit] = useState(false);
     useEffect(() => {
@@ -64,10 +64,10 @@ export default function (props) {
                 temp = await getParcoursContents(identifiant);
             }
             setIsInit(true);
-            setGeneralData(temp.general);
+            setParcoursInfo(temp.general);
             setEtapesData(temp.etapes);
         }
         loadParcours();
     }, [])
-    return <ParcoursBegin {...props} generalData={generalData} etapesData={etapesData} navigation={navigation} isInit={isInit} />;
+    return <ParcoursBegin {...props} parcoursInfo={parcoursInfo} etapesData={etapesData} navigation={navigation} isInit={isInit} />;
 }

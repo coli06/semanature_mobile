@@ -14,7 +14,6 @@ class CompterImage extends Component {
         super(props);
         this.state = {
             value: '',
-            communesData: null,
             reponse: this.props.currentGame.reponse
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
@@ -25,27 +24,12 @@ class CompterImage extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.fetchCommunesData(parcours[size-1].parcoursId)
-            .then(communesData => {
-                this.setState({ communesData });
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-            });
     }
-    fetchCommunesData(id) {
-        return getParcoursContents(id)
-            .then(communesData => {
-                return communesData.general;
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-                return null; // or some default value if an error occurs
-            });
-    }
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+    
     handleBackButtonClick() {
         return true;
     }
@@ -56,17 +40,17 @@ class CompterImage extends Component {
         const result = this.props.currentGame.reponse;
         const paragraph = this.props.currentGame.texte;
         const title = this.props.currentGame.nom;
-        const etapeMax = this.props.parcours.etape_max;
+        const etapeMax = this.props.parcoursInfo.etape_max;
         if (etapeMax === undefined) {
-            var TopBarreName = "";
+            var topBarreName = "";
         } else {
-            var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
         }
         const icone = require('./../../../assets/compter_image_icone.png');
 
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
-                <TopBarre name={TopBarreName} />
+                <TopBarre name={topBarreName} />
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} styel={styles.scrollView}>
                         <View style={styles.card}>
@@ -78,7 +62,9 @@ class CompterImage extends Component {
                         <View style={styles.rightAlign}>
                             <NextPage pageName={"GameOutcomePage"}
                                 parameters={{
-                                    parcours: this.props.parcours, currentGame: this.props.currentGame,
+                                    parcoursInfo: this.props.parcoursInfo,
+                                    parcours: this.props.parcours,
+                                    currentGame: this.props.currentGame,
                                     win: parseInt(this.state.value) == parseInt(result),
                                 }}
                                 text="Valider"

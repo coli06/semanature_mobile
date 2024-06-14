@@ -94,8 +94,6 @@ export async function getParcoursFromCommune(cityName) {
 // }
 // If the parcours does not exist : Output : {}
 export async function getParcoursContents(id) {
-	console.log("Et un fetch firebase de plus...");
-
 	try {
 		if (await checkQueryQuota(40, 50) == "block") {
 			return {};

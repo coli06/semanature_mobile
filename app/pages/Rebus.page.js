@@ -9,6 +9,7 @@ class RebusPage extends Component {
     render() {
         return (
             <Rebus
+                parcoursInfo={this.props.route.params.parcoursInfo}
                 parcours={this.props.route.params.parcours}
                 currentGame={this.props.route.params.currentGame}
             />

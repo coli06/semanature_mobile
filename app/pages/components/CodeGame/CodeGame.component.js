@@ -21,24 +21,8 @@ class CodeGame extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        /* this.fetchCommunesData(parcours[size-1].parcoursId)
-            .then(communesData => {
-                this.setState({ communesData });
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-            }); */
     }
-    fetchCommunesData(id) {
-        return getParcoursContents(id)
-            .then(communesData => {
-                return communesData.general;
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-                return null; // or some default value if an error occurs
-            });
-    }
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
@@ -64,48 +48,48 @@ class CodeGame extends Component {
         this.setState({ input: input })
     }
 
-  render() {
-    const paragraph = this.props.currentGame.texte;
-    const etapeMax = this.props.parcours.etape_max;
-    if (etapeMax === undefined) {
-        var TopBarreName = "";
-    } else {
-        var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+    render() {
+      const paragraph = this.props.currentGame.texte;
+      const etapeMax = this.props.parcoursInfo.etape_max;
+      if (etapeMax === undefined) {
+          var topBarreName = "";
+      } else {
+          var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+      }
+      const title = this.props.currentGame.nom;
+      const icone = require('./../../../assets/code_paysage_icone.png');
+      const illustration = this.props.currentGame.image_url;
+      return (
+        <SafeAreaView style={styles.outsideSafeArea}>
+          <TopBarre name={topBarreName} />
+          <View style={styles.globalContainer}>
+            <ScrollView contentContainerStyle={styles.scrollViewContainer} styel={styles.scrollView}>
+              <View style={styles.card}>
+                <MainTitle title={title} icone={icone} />
+                {(illustration != '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
+                <Text style={styles.description}>{paragraph}</Text>
+                <TextInput style={styles.inputTextField} onChangeText={this.handleChange} editable={true} placeholder="CODE" />
+              </View>
+              <View style={styles.rightAlign}>
+                <TouchableOpacity style={styles.bouton}
+                  disabled={this.state.confirmClicked}
+                  onPress={() => {
+                    if (NormalizeStrings(this.state.code) == NormalizeStrings(this.state.input)) {
+                      this.handleConfirmClicked();
+                      this.props.navigation.navigate("GamePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours });
+                    }
+                    else {
+                      Alert.alert("Mauvais code !");
+                    }
+                  }}>
+                  <Text style={styles.boutonText}> {"Valider"} </Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </SafeAreaView>
+      );
     }
-    const title = this.props.currentGame.nom;
-    const icone = require('./../../../assets/code_paysage_icone.png');
-    const illustration = this.props.currentGame.image_url;
-    return (
-      <SafeAreaView style={styles.outsideSafeArea}>
-        <TopBarre name={TopBarreName} />
-        <View style={styles.globalContainer}>
-          <ScrollView contentContainerStyle={styles.scrollViewContainer} styel={styles.scrollView}>
-            <View style={styles.card}>
-              <MainTitle title={title} icone={icone} />
-              {(illustration != '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
-              <Text style={styles.description}>{paragraph}</Text>
-              <TextInput style={styles.inputTextField} onChangeText={this.handleChange} editable={true} placeholder="CODE" />
-            </View>
-            <View style={styles.rightAlign}>
-              <TouchableOpacity style={styles.bouton}
-                disabled={this.state.confirmClicked}
-                onPress={() => {
-                  if(NormalizeStrings(this.state.code) == NormalizeStrings(this.state.input)) {
-                    this.handleConfirmClicked();
-                    this.props.navigation.navigate("GamePage", { parcours: this.props.parcours });
-                  }
-                  else {
-                    Alert.alert("Mauvais code !");
-                  }
-                }}>
-                <Text style={styles.boutonText}> {"Valider"} </Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </View>
-      </SafeAreaView>
-    );
-  }
 }
 
 export default function (props) {

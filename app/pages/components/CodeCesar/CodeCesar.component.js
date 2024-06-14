@@ -19,7 +19,6 @@ class CodeCesar extends Component {
         // récupère le texte initial et le décalage puis retient le texte crypté dans 'newText'.
         this.state = {
             newText: Cesar(NormalizeStrings(this.props.currentGame.texteBrut), parseInt(this.props.currentGame.decalage)),
-            communesData: null
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
@@ -29,24 +28,8 @@ class CodeCesar extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.fetchCommunesData(parcours[size-1].parcoursId)
-            .then(communesData => {
-                this.setState({ communesData });
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-            });
     }
-    fetchCommunesData(id) {
-        return getParcoursContents(id)
-            .then(communesData => {
-                return communesData.general;
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-                return null; // or some default value if an error occurs
-            });
-    }
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
@@ -66,22 +49,22 @@ class CodeCesar extends Component {
      */
     handleInputTextChange = (input) => this.setState({ decoded: input })
 
-  render() {
-    const question = this.props.currentGame.question;
-    const title = this.props.currentGame.nom;
-    const etapeMax = this.props.parcours.etape_max;
-    if (etapeMax === undefined) {
-        var TopBarreName = "";
-    } else {
-        var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
-    }
+    render() {
+        const question = this.props.currentGame.question;
+        const title = this.props.currentGame.nom;
+        const etapeMax = this.props.parcoursInfo.etape_max;
+        if (etapeMax === undefined) {
+            var topBarreName = "";
+        } else {
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+        }
 
-    const icone = require('./../../../assets/code_cesar_icone.png');
-    const illustration = this.props.currentGame.image_url;
+        const icone = require('./../../../assets/code_cesar_icone.png');
+        const illustration = this.props.currentGame.image_url;
 
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
-                <TopBarre name={TopBarreName} />
+                <TopBarre name={topBarreName} />
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} styel={styles.scrollView}>
                         <View style={styles.card}>
@@ -96,7 +79,9 @@ class CodeCesar extends Component {
                         <View style={styles.rightAlign}>
                             <NextPage pageName={"GameOutcomePage"}
                                 parameters={{
-                                    parcours: this.props.parcours, currentGame: this.props.currentGame,
+                                    parcoursInfo: this.props.parcoursInfo,
+                                    parcours: this.props.parcours,
+                                    currentGame: this.props.currentGame,
                                     // la condition détermine si l'entrée de l'utilisateur correspond au message initial
                                     win: this.state.decoded !== undefined && NormalizeStrings(this.state.decoded) === NormalizeStrings(this.props.currentGame.texteBrut),
                                 }}
@@ -109,7 +94,6 @@ class CodeCesar extends Component {
             </SafeAreaView>
         );
     }
-
 }
 
 export default function (props) {

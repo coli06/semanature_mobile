@@ -46,9 +46,11 @@ class FinParcoursPage extends Component {
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+    
     handleBackButtonClick() {
         return true;
     }

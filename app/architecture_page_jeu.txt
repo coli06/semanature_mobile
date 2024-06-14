@@ -58,7 +58,7 @@ Cette partie a servi à récupérer les propriétés passées en paramètre et �
         ...;
         render() {
             ... (initialisation des const);
-            var TopBarreName = "Étape " + this.props.currentGame.ordre + "/" + (this.props.currentGame.sizeleft + this.props.currentGame.ordre);
+            var topBarreName = "Étape " + this.props.currentGame.ordre + "/" + (this.props.currentGame.sizeleft + this.props.currentGame.ordre);
             return (
                 <SafeAreaView style={styles.outsideSafeArea}>
                     <View style={styles.globalContainer}>

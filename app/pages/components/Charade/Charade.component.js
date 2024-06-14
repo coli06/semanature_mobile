@@ -14,7 +14,6 @@ class Charade extends Component {
         super(props);
         this.state = {
             proposition: "",
-            communesData: null
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
@@ -24,23 +23,6 @@ class Charade extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        /* this.fetchCommunesData(parcours[size-1].parcoursId)
-            .then(communesData => {
-                this.setState({ communesData });
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-            });*/
-    }
-    fetchCommunesData(id) {
-        return getParcoursContents(id)
-            .then(communesData => {
-                return communesData.general;
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-                return null; // or some default value if an error occurs
-            });
     }
 
     componentWillUnmount() {
@@ -55,11 +37,11 @@ class Charade extends Component {
 
     render() {
         const paragraph = this.props.currentGame.texte;
-        const etapeMax = this.props.parcours.etape_max;
+        const etapeMax = this.props.parcoursInfo.etape_max;
         if (etapeMax === undefined) {
-            var TopBarreName = "";
+            var topBarreName = "";
         } else {
-            var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
         }
 
         const charade = this.props.currentGame.charade;
@@ -70,7 +52,7 @@ class Charade extends Component {
         const icone = require('./../../../assets/charade_icone.png');
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
-                <TopBarre name={TopBarreName} />
+                <TopBarre name={topBarreName} />
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
@@ -80,9 +62,12 @@ class Charade extends Component {
                             <TextInput style={styles.inputTextField} onChangeText={this.handleInputTextChange} editable={true} placeholder='RÉPONSE' />
                         </View>
                         <View style={styles.rightAlign}>
-                            <NextPage pageName={"GameOutcomePage"}
+                            <NextPage
+                                pageName={"GameOutcomePage"}
                                 parameters={{
-                                    parcours: this.props.parcours, currentGame: this.props.currentGame,
+                                    parcoursInfo: this.props.parcoursInfo,
+                                    parcours: this.props.parcours,
+                                    currentGame: this.props.currentGame,
                                     win: NormalizeStrings(this.state.proposition) == reponse,
                                 }}
                                 text="Valider"

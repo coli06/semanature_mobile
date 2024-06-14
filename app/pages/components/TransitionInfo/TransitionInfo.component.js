@@ -21,9 +21,6 @@ import loadParcoursLocally from "../../../utils/loadParcoursLocally";
 class TransitionInfo extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            communesData: null,
-        };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
     componentDidMount() {
@@ -31,27 +28,12 @@ class TransitionInfo extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        /* this.fetchCommunesData(parcours[size-1].parcoursId)
-            .then(communesData => {
-                this.setState({ communesData });
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-            }); */
     }
-    fetchCommunesData(id) {
-        return getParcoursContents(id)
-            .then(communesData => {
-                return communesData.general;
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-                return null; // or some default value if an error occurs
-            });
-    }
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+    
     handleBackButtonClick() {
         return true;
     }
@@ -60,16 +42,16 @@ class TransitionInfo extends Component {
         const paragraph = parseText(this.props.currentGame.texte);
         const title = this.props.currentGame.nom;
         const illustration = this.props.currentGame.image_url;
-        const etapeMax = this.props.parcours.etape_max;
+        const etapeMax = this.props.parcoursInfo.etape_max;
         if (etapeMax === undefined) {
-            var TopBarreName = "";
+            var topBarreName = "";
         } else {
-            var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
         }
         console.log(etapeMax);
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
-                <TopBarre name={TopBarreName} />
+                <TopBarre name={topBarreName} />
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
@@ -79,7 +61,7 @@ class TransitionInfo extends Component {
                         </View>
                         <NextPage
                             pageName="GamePage"
-                            parameters={{ parcours: this.props.parcours }}
+                            parameters={{ parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours }}
                         />
                     </ScrollView>
                 </View>
@@ -90,12 +72,6 @@ class TransitionInfo extends Component {
 
 export default function (props) {
     const navigation = useNavigation();
-    /*useEffect(() => {
-            BackHandler.addEventListener('hardwareBackPress', () => {
-                    return true;
-            })
-    },[]);
-    */
     return <TransitionInfo {...props} navigation={navigation} />
 }
 //<Image source={illustration} style={styles.image} />

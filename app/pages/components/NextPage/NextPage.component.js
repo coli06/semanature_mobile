@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from './NextPage.component.style';
-
 import { useNavigation } from '@react-navigation/native';
 
 /** 

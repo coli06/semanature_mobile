@@ -18,7 +18,7 @@ class Pyramid extends Component {
         super(props);
         this.state = {
             lastCircleValue: '',
-            communesData: null};
+        };
         // initialise les valeurs des premiers cercles avec la fonction generateValues
         this.state = { s: generateValues(this.props.currentGame.nombre), confirmClicked: false };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
@@ -29,27 +29,12 @@ class Pyramid extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        /* this.fetchCommunesData(parcours[size-1].parcoursId)
-            .then(communesData => {
-                this.setState({ communesData });
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-            }); */
     }
-    fetchCommunesData(id) {
-        return getParcoursContents(id)
-            .then(communesData => {
-                return communesData.general;
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-                return null; // or some default value if an error occurs
-            });
-    }
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+    
     handleBackButtonClick() {
         return true;
     }
@@ -62,23 +47,23 @@ class Pyramid extends Component {
 
     handleInputTextChange = (input) => this.setState({ lastCircleValue: input })
 
-  render() {
-    const question = this.props.currentGame.question;
-    const title = this.props.currentGame.nom;
-    const result = this.props.currentGame.nombre;
-    const illustration = this.props.currentGame.image_url;
-    const etapeMax = this.props.parcours.etape_max;
-    if (etapeMax === undefined) {
-        var TopBarreName = "";
-    } else {
-        var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
-    }
-    const textRegles = "Remplir la pyramide jusqu'en bas selon le principe suivant : chaque case vide doit contenir la somme des deux cases qui se trouvent au-dessus"
-    const icone = require('./../../../assets/calcul_pyramidal_icone.png');
+    render() {
+        const question = this.props.currentGame.question;
+        const title = this.props.currentGame.nom;
+        const result = this.props.currentGame.nombre;
+        const illustration = this.props.currentGame.image_url;
+        const etapeMax = this.props.parcoursInfo.etape_max;
+        if (etapeMax === undefined) {
+            var topBarreName = "";
+        } else {
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+        }
+        const textRegles = "Remplir la pyramide jusqu'en bas selon le principe suivant : chaque case vide doit contenir la somme des deux cases qui se trouvent au-dessus"
+        const icone = require('./../../../assets/calcul_pyramidal_icone.png');
 
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
-                <TopBarre name={TopBarreName} />
+                <TopBarre name={topBarreName} />
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
@@ -88,7 +73,6 @@ class Pyramid extends Component {
                             <Text style={styles.description}>{textRegles}</Text>
                             <Text style={styles.description}>{question}</Text>
 
-
                             <View style={styles.gameArea}>
 
                                 <CircleLine count={4} edit={false} preFill={true} s={this.state.s} />
@@ -97,8 +81,6 @@ class Pyramid extends Component {
                                 <CircleLine count={1} edit={true} onChangeText={this.handleInputTextChange} value={this.state.lastCircleValue} preFill={false} />
 
                             </View>
-
-
                         </View>
                         <View style={styles.rightAlign}>
                             <TouchableOpacity style={styles.bouton}
@@ -118,13 +100,10 @@ class Pyramid extends Component {
                                     if (parseInt(this.state.lastCircleValue) == newResult) {
                                         win = 1;
                                     }
-                                    this.props.navigation.navigate("GameOutcomePage", { parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                    this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
                                 }}>
                                 <Text style={styles.boutonText}> {"Valider"} </Text>
                             </TouchableOpacity>
-                        </View>
-                        <View>
-
                         </View>
                     </ScrollView>
                 </View>
@@ -138,4 +117,3 @@ export default function (props) {
     const navigation = useNavigation();
     return <Pyramid {...props} navigation={navigation} />
 }
-

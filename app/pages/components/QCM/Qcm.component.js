@@ -15,7 +15,6 @@ class Qcm extends Component {
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state = {
             confirmClicked: false,
-            communesData: null
         };
     }
 
@@ -24,32 +23,18 @@ class Qcm extends Component {
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        /* this.fetchCommunesData(parcours[size-1].parcoursId)
-            .then(communesData => {
-                this.setState({ communesData });
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-            }); */
     }
-    fetchCommunesData(id) {
-        return getParcoursContents(id)
-            .then(communesData => {
-                return communesData.general;
-            })
-            .catch(error => {
-                console.error('Error fetching communes data:', error);
-                return null; // or some default value if an error occurs
-            });
-    }
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
+    
     handleBackButtonClick() {
         return true;
     }
 
     currentGame = this.props.currentGame;
+    
     handleConfirmClicked = () => {
         if (!this.state.confirmClicked) {
             this.setState({ confirmClicked: true });
@@ -57,18 +42,18 @@ class Qcm extends Component {
     }
 
     render() {
-        const etapeMax = this.props.parcours.etape_max;
+        const etapeMax = this.props.parcoursInfo.etape_max;
         if (etapeMax === undefined) {
-            var TopBarreName = "";
+            var topBarreName = "";
         } else {
-            var TopBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
         }
         const title = this.currentGame.nom
         const icone = require('./../../../assets/qcm_icone.png');
         const illustration = this.props.currentGame.image_url;
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
-                <TopBarre name={TopBarreName} />
+                <TopBarre name={topBarreName} />
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
@@ -85,7 +70,7 @@ class Qcm extends Component {
                                             if (this.currentGame.index_bonneReponse == 0) {
                                                 win = 1;
                                             }
-                                            this.props.navigation.navigate("GameOutcomePage", { parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
                                         }}>
                                         <Text adjustsFontSizeToFit={true} style={styles.boutonText}> {this.currentGame.reponses_tab[0]} </Text>
                                     </TouchableOpacity>
@@ -97,7 +82,7 @@ class Qcm extends Component {
                                             if (this.currentGame.index_bonneReponse == 1) {
                                                 win = 1;
                                             }
-                                            this.props.navigation.navigate("GameOutcomePage", { parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
                                         }}>
                                         <Text adjustsFontSizeToFit={true} style={styles.boutonText}> {this.currentGame.reponses_tab[1]} </Text>
                                     </TouchableOpacity>
@@ -112,7 +97,7 @@ class Qcm extends Component {
                                             if (this.currentGame.index_bonneReponse == 2) {
                                                 win = 1;
                                             }
-                                            this.props.navigation.navigate("GameOutcomePage", { parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
                                         }}>
                                         <Text adjustsFontSizeToFit={true} style={styles.boutonText}> {this.currentGame.reponses_tab[2]} </Text>
                                     </TouchableOpacity>
@@ -125,7 +110,7 @@ class Qcm extends Component {
                                             if (this.currentGame.index_bonneReponse == 3) {
                                                 win = 1;
                                             }
-                                            this.props.navigation.navigate("GameOutcomePage", { parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
                                         }}>
                                         <Text adjustsFontSizeToFit={true} style={styles.boutonText}> {this.currentGame.reponses_tab[3]} </Text>
                                     </TouchableOpacity>

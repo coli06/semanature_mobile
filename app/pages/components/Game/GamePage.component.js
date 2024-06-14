@@ -4,7 +4,6 @@ import { StyleSheet, View, Text } from 'react-native';
 
 
 export default function (props) {
-
     const navigation = useNavigation();
     const currentGame = props.parcours[0]; // étape en cours
     var size = props.parcours.length;
@@ -13,6 +12,7 @@ export default function (props) {
         size = size + 1;
     }
 
+    const parcoursInfo = props.parcoursInfo; // nom et informations du parcours
     const parcours = props.parcours.slice(1); // reste du parcours
     
     /*if (parcours.type.find((item) => item == parcours.type) === "fin_parcours") {
@@ -25,72 +25,72 @@ export default function (props) {
     useEffect(() => {
         switch (currentGame.type) {
             case ("jeu_info"): {
-                navigation.navigate("LeSaviezVousPage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("LeSaviezVousPage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
             
             case ("jeu_blague"): {
-                navigation.navigate("JokePage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("JokePage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("jeu_qcm"): {
-                navigation.navigate("QcmPage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("QcmPage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("jeu_intrus"): {
-                navigation.navigate("FindIntruderPage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("FindIntruderPage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("jeu_pyramide"): {
-                navigation.navigate("PyramidPage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("PyramidPage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("transi_gps"): {
-                navigation.navigate("TransitionGPSPage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("TransitionGPSPage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("jeu_code"): {
-                navigation.navigate("CodeGamePage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("CodeGamePage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("jeu_cesar"): {
-                navigation.navigate("CodeCesarPage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("CodeCesarPage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("jeu_compterimage"): {
-                navigation.navigate("CompterImagePage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("CompterImagePage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("transi_info"): {
-                navigation.navigate("TransitionInfoPage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("TransitionInfoPage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("jeu_charade"): {
-                navigation.navigate("CharadePage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("CharadePage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("jeu_rebus"): {
-                navigation.navigate("RebusPage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("RebusPage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("jeu_silhouette"): {
-                navigation.navigate("FindSilhouettePage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("FindSilhouettePage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
             case ("jeu_ecogeste"): {
-                navigation.navigate("EcoGestePage", { parcours: parcours, currentGame: currentGame });
+                navigation.navigate("EcoGestePage", { parcoursInfo: parcoursInfo, parcours: parcours, currentGame: currentGame });
                 break;
             }
 
@@ -105,6 +105,3 @@ export default function (props) {
         }
     })
 }
-
-
-

@@ -12,10 +12,11 @@ class PyramidPage extends Component {
     render() {
         return (
             <View style={styles.homestyle}>
-                <Pyramid parcours={this.props.route.params.parcours}
+                <Pyramid
+                    parcoursInfo={this.props.route.params.parcoursInfo}
+                    parcours={this.props.route.params.parcours}
                     currentGame={this.props.route.params.currentGame}
                 />
-
             </View>
         );
     }
