@@ -23,6 +23,7 @@
         "eas-cli": "^9.2.0",
         "expo": "~50.0.19",
         "expo-asset": "~9.0.2",
+    	"expo-location": "~16.5.5",
         "expo-constants": "~15.4.6",
         "expo-splash-screen": "~0.26.5",
         "expo-status-bar": "~1.11.1",
@@ -37,7 +38,9 @@
         "react-native-obfuscating-transformer": "^1.0.0",
         "react-native-safe-area-context": "4.8.2",
         "react-native-screens": "~3.29.0",
-        "react-native-svg-transformer": "^1.4.0"
+        "react-native-svg-transformer": "^1.4.0",
+    	"react-native-webview": "^13.10.3",
+    	"react-native-yandexmapkit": "^0.1.4"
     },
     "devDependencies": {
         "@babel/core": "^7.24.6",

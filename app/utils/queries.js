@@ -222,3 +222,31 @@ async function checkQueryQuota(warningLimit, blockLimit) {
 	// }
 	return "ok";
 }
+
+
+//Fonction pour la carte
+
+export async function getParcoursDonne() {
+	const parcoursCollectionRef = collection(db, 'parcours');
+	const q = query(parcoursCollectionRef, where('brouillon', '==', false)); // Add condition to filter 'brouillon' as false
+	const querySnapshot = await getDocs(q);
+  
+	const parcoursDonne = [];
+	querySnapshot.forEach(doc => {
+	  const data = doc.data();
+	  if (data.gps) { // Check if gps exists
+		const { latitude, longitude } = data.gps;
+		parcoursDonne.push({
+		  latitude: latitude,
+		  longitude: longitude,
+		  titre: data.titre,
+		  difficulte: data.difficulte,
+		  duree: data.duree
+		});
+	  } else {
+		console.warn(`No GPS data for document ${doc.id}`);
+	  }
+	});
+  
+	return parcoursDonne;
+  }
