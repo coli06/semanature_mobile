@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
-import loadParcoursLocally from '../../../utils/loadParcoursLocally';
+import { getParcoursFromCommuneLocally } from '../../../utils/loadParcoursLocally';
 import saveParcours, { saveObject, saveGameHistory } from '../../../components/ParcoursCard/saveParcours';
 
 class FinParcoursPage extends Component {
@@ -21,24 +21,24 @@ class FinParcoursPage extends Component {
         const parcoursId = this.props.currentGame.parcoursId
 
         // sauvegarde du score (et du score max si pas encore sauvegardé)
-        let promise = loadParcoursLocally(parcoursId);
-        promise.then((Parcours) => {
-            if (Parcours == null) {
+        getParcoursFromCommuneLocally(props.parcours.commune).then((parcours) => {
+            parcours = parcours.filter((item) => item.identifiant === parcoursId);
+            if (parcours == null) {
                 return;
             }
-            if (Parcours.general.score == null) {
-                Parcours.general.score = score;
-                Parcours.general.score_max = scoremax;
+            if (parcours.general.score == null) {
+                parcours.general.score = score;
+                parcours.general.score_max = scoremax;
             } else {
-                Parcours.general.score = Math.min(Math.max(score, Parcours.general.score), scoremax);
-                Parcours.general.score_max = scoremax;
+                parcours.general.score = Math.min(Math.max(score, parcours.general.score), scoremax);
+                parcours.general.score_max = scoremax;
             }
-            saveObject(parcoursId, JSON.stringify(Parcours));
+            saveObject(parcoursId, JSON.stringify(parcours));
             console.log("score : ", score);
             console.log("scoremax : ", scoremax);
-            console.log("Parcours.general.score : ", Parcours.general.score);
-            console.log("Parcours.general.score_max : ", Parcours.general.score_max);
-            saveGameHistory(Parcours, score);
+            console.log("parcours.general.score : ", parcours.general.score);
+            console.log("parcours.general.score_max : ", parcours.general.score_max);
+            saveGameHistory(parcours, score);
         })
     }
 

@@ -7,33 +7,32 @@ export async function getParcoursFromCommuneLocally(cityName) {
 }
 
 /**
- * load the parcours from the disque, return null if there is a problem to get the parcours
+ * Load the circuit from the disk, return null if there is a problem to get it
  * @param identifiant 
  * @returns {promise<{ general: parcours, etapes: etapes } | null>}
  */
 export default async function loadParcoursLocally(identifiant) {
-	console.log("load the id " + identifiant);
+	console.log("Loading circuit with id " + identifiant);
 	try {
 		let temp = await loadObject(identifiant);
 		if (temp != "") {
 			return JSON.parse(temp);
 		} else {
+			console.log("vide");
 			return null;
 		}
 	} catch (error) {
-		console.error("Error while loading parcours :", error);
+		console.error("Error while loading circuit :", error);
 	}
 }
 
 /**
- * Récupère un objet du stockage
+ * Load an object from the disk
  * @param {String} key 
- * @returns String
+ * @returns {String}
  */
 async function loadObject(key) {
 
-	// Base64-encoded data -> str.length = espace occupé par l'objet en Mo
-	const cutSize = 1000000;
 	let nbCuts = parseInt(await AsyncStorage.getItem(key));
 
 	// clés de tous les morceaux de l'objet
@@ -44,7 +43,7 @@ async function loadObject(key) {
 
 	// récupération des morceaux de l'objet
 	let cuts = await AsyncStorage.multiGet(keys);
-
+	console.log(cuts);
 	// reconstitution de l'objet
 	let object = "";
 	for (let i = 0; i < nbCuts; i++) {

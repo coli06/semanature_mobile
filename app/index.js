@@ -2,6 +2,7 @@ import React, { Component, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import Navigation from './routes/Navigation'
 import { autoSignIn } from './config/firebaseConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class LPOMobApp extends Component {
 	render() {
@@ -16,6 +17,21 @@ class LPOMobApp extends Component {
 const App = () => {
 	useEffect(() => {
 		autoSignIn();
+		const monitorStorageUsage = async () => {
+			const keys = await AsyncStorage.getAllKeys();
+			const items = await AsyncStorage.multiGet(keys);
+			await AsyncStorage.clear();
+			
+			let totalSize = 0;
+			items.forEach(([key, value]) => {
+			  totalSize += key.length + value.length;
+			});
+		  
+			console.log(`Total storage usage: ${totalSize} bytes`);
+		  };
+		  
+		  // Call this function to log storage usage
+		  monitorStorageUsage();		  
 	}, []);
 	return <LPOMobApp />;
 };

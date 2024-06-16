@@ -2,7 +2,7 @@ import React, { Component, useEffect, useState } from 'react';
 import { View, Image, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getParcoursContents } from './../../../utils/queries';
-import loadParcoursLocally from '../../../utils/loadParcoursLocally';
+import loadParcoursLocally, { getParcoursFromCommuneLocally } from '../../../utils/loadParcoursLocally';
 import TopBarre from './../../../components/TopBarre/TopBarre.component'
 import styles from './ParcoursBegin.component.style'
 import NextPage from './../NextPage/NextPage.component'
@@ -59,13 +59,15 @@ export default function (props) {
     const [isInit, setIsInit] = useState(false);
     useEffect(() => {
         async function loadParcours() {
-            var temp = await loadParcoursLocally(identifiant);
-            if (temp == undefined) {
-                temp = await getParcoursContents(identifiant);
+            var parcours = await getParcoursContents(identifiant);
+            if (parcours == undefined) {
+                console.error("Circuit not found in storage");
+            } else {
+                console.log(parcours);
+                setIsInit(true);
+                setParcoursInfo(parcours.general);
+                setEtapesData(parcours.etapes);
             }
-            setIsInit(true);
-            setParcoursInfo(temp.general);
-            setEtapesData(temp.etapes);
         }
         loadParcours();
     }, [])

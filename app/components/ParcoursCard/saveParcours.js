@@ -7,14 +7,10 @@ import NetInfo from "@react-native-community/netinfo";
  * @param {*} parcours 
  */
 export default async function saveParcours(parcours) {
-	try {
-        const state = await NetInfo.fetch();
-        if (!state.isInternetReachable) {
-            return Promise.reject("internet indisponible");
-        }
-    } catch (error) {
-        return Promise.reject("Erreur lors de la vérification de la connexion Internet");
-    }
+	const state = await NetInfo.fetch();
+	if (!state.isInternetReachable) {
+		return Promise.reject("internet indisponible");
+	}
 
 	// ajoute la commune aux communes connues en local
 	const temp = await AsyncStorage.getItem('commune');
@@ -56,14 +52,10 @@ export default async function saveParcours(parcours) {
 }
 
 export async function telechargerParcours(parcours) {
-	try {
-        const state = await NetInfo.fetch();
-        if (!state.isInternetReachable) {
-            return Promise.reject("Internet connection unavailable");
-        }
-    } catch (error) {
-        return Promise.reject("Error during Internet connection verification");
-    }
+	const state = await NetInfo.fetch();
+	if (!state.isInternetReachable) {
+		return Promise.reject("Internet connection unavailable");
+	}
 
 	// ajoute la commune aux communes connues en local
 	let temp = await AsyncStorage.getItem('commune');
@@ -80,13 +72,12 @@ export async function telechargerParcours(parcours) {
 	// ajoute le parcours
 	temp = await AsyncStorage.getItem(parcours.identifiant);
 	if (temp == null || temp != 0) {
-		let etapes;
-		etapes = await getParcoursContents(parcours.identifiant);
+		let etapes = await getParcoursContents(parcours.identifiant);
 		if (etapes == null || etapes == {}) {
-			return Promise.reject("Couldn't get parcours from fireBase");
+			return Promise.reject("Couldn't get circuit from firebase");
 		}
 		etapes.general.length = etapes.etapes.length;
-		await saveObject(parcours.identifiant, JSON.stringify(etapes));
+		saveObject(parcours.identifiant, JSON.stringify(etapes));
 	}
 
 	// ajoute le parcours à la commune
@@ -100,7 +91,7 @@ export async function telechargerParcours(parcours) {
 			await AsyncStorage.setItem('commune.' + parcours.commune, JSON.stringify(parcoursIds));
 		}
 	}
-
+	console.log("saved " + parcours.identifiant);
 	return Promise.resolve();
 }
 
@@ -125,22 +116,21 @@ export async function saveGameHistory(parcours, myscore) {
 /**
  * Sauvegarde un objet en le découpant en plusieurs morceaux pour ne pas
  * dépasser la taille limite de 2Mo par objet stocké
- * @param {String} key 
+ * @param {String} key
  * @param {String} object 
  */
 export async function saveObject(key, object) {
-	// Base64-encoded data -> str.length = espace occuper par l'objet en Mo
+	// Base64-encoded data -> object.length = espace occupé par l'objet en Mo
 	const cutSize = 1000000;
 	let nbCuts = Math.ceil(object.length / cutSize);
-
 	// clé + morceau de l'objet dans une case du tableau
 	let cuts = new Array();
-	for (let i = 0; i < nbCuts; i++) {
+	console.log(cuts);
+	let i;
+	for (i = 0; i < nbCuts; i++) {
 		cuts.push([key + '.' + i, object.slice(i * cutSize, (i + 1) * cutSize)])
 	}
-
 	// stockage
-	await AsyncStorage.setItem(key, nbCuts.toString())
+	await AsyncStorage.setItem(key, nbCuts.toString());
 	await AsyncStorage.multiSet(cuts);
 }
-

@@ -41,9 +41,9 @@ export async function getAllCommunes() {
 	return communes;
 }
 
-// Return all parcours from the commune given in argument
-// Input : Commune name (string)
-// Output : Parcours { titre, description, commune } (object)
+// Return all circuits from the given city
+// Input : City name (string)
+// Output : Circuits { titre, description, commune } (object)
 export async function getParcoursFromCommune(cityName) {
 
 	let blocked = false;
@@ -204,7 +204,7 @@ async function checkQueryQuota(warningLimit, blockLimit) {
 		return "ok";
 	}
 
-	// dépassage de la limite du jour, blockage des requêtes
+	// dépassement de la limite du jour, blockage des requêtes
 	// if (parseInt(nbCalls) >= blockLimit) {
 	//   Alert.alert("Vous avez utilisé vos " + blockLimit + " téléchargements d'aujourd'hui.");
 	//   console.log("query " + 10);

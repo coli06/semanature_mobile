@@ -6,16 +6,20 @@ export default StyleSheet.create({
 	title: {
 		...common.title
 	},
+
 	card: {
 		...common.card,
 	},
+
 	texte: {
 		color: theme.DARK_GRAY_COLOR
 	},
+
 	texte_imp: {
 		color: theme.DARK_GRAY_COLOR,
 		fontWeight: theme.FONT_WEIGHT_BOLD,
 	},
+
 	imagecontainer: {
 		width: 200,
 		height: 200,
@@ -23,12 +27,14 @@ export default StyleSheet.create({
 		resizeMode: 'contain',
 		alignSelf: 'center',
 	},
+
 	bouton: {
 		...common.bouton,
 		paddingHorizontal: 0,
 		flex: 1,
 		marginHorizontal: 5,
 	},
+
 	bouton2: {
 		...common.bouton,
 		paddingHorizontal: 0,
@@ -36,11 +42,13 @@ export default StyleSheet.create({
 		marginHorizontal: 5,
 		alignSelf: 'center',
 	},
+
 	boutonText: {
 		...common.boutonText,
 		flexGrow: 1,
 		textAlignVertical: 'center',
 	},
+
 	rowFlex: {
 		flex: 1,
 		flexDirection: 'row',
@@ -48,4 +56,8 @@ export default StyleSheet.create({
 		justifyContent: 'space-between',
 		textAlign: 'center',
 	},
+
+    activityIndicator: {
+        ...common.activityIndicator,
+    }
 })
