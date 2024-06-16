@@ -76,7 +76,7 @@ const MapComponent = memo(() => {
 
         // Add marker for current location
         L.marker([${location.coords.latitude}, ${location.coords.longitude}]).addTo(map)
-          .bindPopup('You are here')
+          .bindPopup('Votre position')
           .openPopup();
 
         // Add markers for hiking spots
