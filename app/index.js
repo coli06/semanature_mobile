@@ -19,6 +19,7 @@ const App = () => {
 		autoSignIn();
 		const monitorStorageUsage = async () => {
 			const keys = await AsyncStorage.getAllKeys();
+			console.log(keys);
 			const items = await AsyncStorage.multiGet(keys);
 			await AsyncStorage.clear();
 			

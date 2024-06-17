@@ -1,12 +1,13 @@
 import React, { useEffect, useState, memo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as Location from 'expo-location';
+import styles from './Map.component.style';
 import { getParcoursDonne } from './../../../utils/queries'; // Ensure the path is correct
 
 const MapComponent = memo(() => {
   const [location, setLocation] = useState(null); // State to store user location
-  const [hikingSpots, setHikingSpots] = useState([]); // State to store hiking spots
+  const [parcours, setParcours] = useState([]); // State to store hiking spots
 
   useEffect(() => {
     let isMounted = true; // Flag to check if component is mounted
@@ -24,10 +25,10 @@ const MapComponent = memo(() => {
           setLocation(location); // Set location state if component is still mounted
         }
 
-        const parcours = await getParcoursDonne(); // Fetch hiking spots from Firebase
+        const temp = await getParcoursDonne(); // Fetch circuits from Firebase
         if (isMounted) {
-          setHikingSpots(parcours); // Set hiking spots state if component is still mounted
-          console.log('Fetched hiking spots:', parcours);
+          setParcours(temp); // Set circuits state if component is still mounted
+          console.log('Fetched circuits :', parcours);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -42,10 +43,11 @@ const MapComponent = memo(() => {
   }, []);
 
   // If location is not yet available, show a loading indicator
-  if (!location || hikingSpots.length === 0) {
+  if (!location) {
     return (
       <View style={styles.container}>
-        <Text>Loading...</Text>
+          <Text>Position inaccessible</Text>
+          <Text>merci de vérifier que la position et Internet sont activés</Text>
       </View>
     );
   }
@@ -79,11 +81,11 @@ const MapComponent = memo(() => {
           .bindPopup('Votre position')
           .openPopup();
 
-        // Add markers for hiking spots
-        const hikingSpots = ${JSON.stringify(hikingSpots)};
-        hikingSpots.forEach(spot => {
-          L.marker([spot.latitude, spot.longitude]).addTo(map)
-            .bindPopup(spot.titre + '<br>' + spot.difficulte + '<br>' + spot.duree);
+        // Add markers for circuits
+        const circuits = ${JSON.stringify(parcours)};
+        circuits.forEach(circuit => {
+          L.marker([circuit.latitude, circuit.longitude]).addTo(map)
+            .bindPopup(circuit.titre + '<br>' + circuit.difficulte + '<br>' + circuit.duree);
         });
       </script>
     </body>
@@ -99,24 +101,11 @@ const MapComponent = memo(() => {
       startInLoadingState={true} // Show loading indicator while loading
       renderLoading={() => (
         <View style={styles.container}>
-          <Text>Loading...</Text>
+          <ActivityIndicator size="large" color={styles.activityIndicator.color} />
         </View>
       )}
     />
   );
-});
-
-// Styles for the component
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  map: {
-    width: '100%',
-    height: '100%',
-  },
 });
 
 export default MapComponent;
