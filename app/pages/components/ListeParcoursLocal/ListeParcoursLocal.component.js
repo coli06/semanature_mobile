@@ -29,7 +29,7 @@ class ListeParcoursLocal extends Component {
                 <SafeAreaView style={styles.outsideSafeArea}>
                     <View style={styles.globalContainer}>
                         <TopBarre name="Parcours téléchargés" />
-                        <Text style={styles.description}>Retrouvez ici tous les parcours déjà téléchargés et disponibles hors-ligne et vos scores.</Text>
+                        <Text style={styles.description}>Retrouvez ici tous les parcours téléchargés disponibles hors-ligne et vos scores.</Text>
                         <ActivityIndicator size="large" color={theme.PRIMARY_COLOR} />
                     </View>
                 </SafeAreaView>
@@ -63,8 +63,9 @@ class ListeParcoursLocal extends Component {
                             // Pour tous les parcours de la commune, on affiche la carte du parcours
                             renderItem={({ item }) => { // Un parcours
                                 return (
-                                    <ParcoursCard parcours={item} reload={this.props.reload}
-                                        refresh={refreshFunc} />
+                                    // TODO
+                                    // Ajouter les scores ici
+                                    <ParcoursCard parcours={item} reload={this.props.reload} refresh={refreshFunc} />
                                 );
                             }}
                         />
@@ -79,6 +80,7 @@ export default function (props) {
     const [refresh, setRefresh] = useState(true);
     const [allDataSource, setAllDataSource] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [internetAvailable, setInternetAvailable] = useState(false);
 
     const recupererListeCommunes = async () => {
         setLoading(true);
@@ -94,6 +96,8 @@ export default function (props) {
                 let parcoursCommune = await getParcoursFromCommuneLocally(communes[i]);
                 allParcours = allParcours.concat(parcoursCommune);
             }
+
+            console.log(allParcours.length, "parcours enregistré(s)");
 
             allParcours.sort((item1, item2) => {
                 let str1 = JSON.stringify(item1);
@@ -129,6 +133,7 @@ export default function (props) {
     const reload = () => {
         recupererListeCommunes();
     };
+
     return <ListeParcoursLocal
         {...props}
         allDataSource={allDataSource}

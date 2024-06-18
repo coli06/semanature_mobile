@@ -7,19 +7,24 @@ export default StyleSheet.create({
         ...common.card,
         marginBottom: 0
     },
+
     scrollViewContainer: {
         ...common.scrollViewContainer,
     },
+
     scrollView: {
         ...common.scrollView,
     },
+
     globalContainer: {
         ...common.globalContainer,
     },
+
     title: {
         ...common.title,
         marginTop: 15
     },
+
     title_inter: {
         color: '#000000',
         fontSize: theme.FONT_SIZE_MEDIUM,
@@ -27,6 +32,7 @@ export default StyleSheet.create({
         textAlign: 'justify',
         padding: 5,
     },
+
     text: {
         color: '#000000',
         fontSize: theme.FONT_SIZE_MEDIUM,
@@ -34,6 +40,7 @@ export default StyleSheet.create({
         textAlign: 'justify',
         padding: 3,
     },
+
     textBis: {
         color: '#000000',
         fontSize: theme.FONT_SIZE_MEDIUM,
@@ -41,6 +48,7 @@ export default StyleSheet.create({
         textAlign: 'left',
         padding: 3,
     },
+
     textBold: {
         color: '#000000',
         fontSize: theme.FONT_SIZE_MEDIUM,
@@ -48,25 +56,36 @@ export default StyleSheet.create({
         padding: 3,
         fontWeight: theme.FONT_WEIGHT_BOLD
     },
+
     outsideSafeArea: {
         ...common.outsideSafeArea,
     },
+
     bouton: {
         ...common.bouton,
     },
+
     boutonText: {
         ...common.boutonText,
     },
+
     iconTextContainer: {
         ...common.iconTextContainer
     },
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+
     map: {
         width: '100%',
         height: '100%',
+    },
+
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    
+    activityIndicator: {
+        ...common.activityIndicator
     }
+
 });

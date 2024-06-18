@@ -8,8 +8,7 @@ class ListeParcoursLocalPage extends Component {
 
     render() {
         return (
-            <ListeParcoursLocal
-            />
+            <ListeParcoursLocal/>
         );
     }
 }

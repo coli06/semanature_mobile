@@ -8,6 +8,7 @@ import theme from './../../../styles/theme.style';
 import styles from './ParcoursChoice.component.style'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NetInfo from "@react-native-community/netinfo";
+import { useFocusEffect } from "@react-navigation/native";
 
 /** Composant de sélection de parcours pour la ville sélectionnée
 */
@@ -29,7 +30,9 @@ class ParcoursChoice extends Component {
                 <SafeAreaView style={styles.outsideSafeArea}>
                     <View style={styles.globalContainer}>
                         <TopBarre name="Choix du parcours" />
-                        <ActivityIndicator size="large" color={theme.COLOR_PRIMARY} />
+                        <View style={styles.activityIndicatorContainer}>
+                            <ActivityIndicator size="large" color={styles.activityIndicator.color} />
+                        </View>
                     </View>
                 </SafeAreaView>
             );
@@ -40,7 +43,8 @@ class ParcoursChoice extends Component {
                 <SafeAreaView style={styles.outsideSafeArea}>
                     <View style={styles.globalContainer}>
                         <TopBarre name="Choix du parcours" />
-                        <Text style={{ paddingTop: 20, padding: 10, fontSize: theme.FONT_SIZE_LARGE }}>Désolé, aucun parcours n'est encore disponible pour cette commune.
+                        <Text style={{ paddingTop: 20, padding: 10, fontSize: theme.FONT_SIZE_LARGE }}>
+                            Désolé, aucun parcours n'est encore disponible pour cette commune.
                         </Text>
                     </View>
                 </SafeAreaView>
@@ -80,13 +84,16 @@ export default function (props) {
     const [refresh, setRefresh] = useState(true);
     const [loading, setLoading] = useState(true);
 
-    let tmp = NetInfo.fetch()
     let lastInternetState = false;
-    tmp.then((state) => {
-        if (internetAvailable != state.isInternetReachable) {
-            setInternetAvailable(state.isInternetReachable);
-        }
-    })
+    NetInfo.fetch()
+        .then((state) => {
+            if (internetAvailable != state.isInternetReachable) {
+                setInternetAvailable(state.isInternetReachable);
+            }
+        })
+        .catch((error) => {
+            console.error("Error while looking for Internet connection", error);
+        })
     NetInfo.addEventListener(state => {
         if (internetAvailable != state.isInternetReachable) {
             setInternetAvailable(state.isInternetReachable);
@@ -113,7 +120,7 @@ export default function (props) {
         return () => unsubscribe();
     }, []);*/
 
-    async function f() {
+    async function renderResults() {
         if (internetAvailable == lastInternetState) {
             return;
         } else {
@@ -144,12 +151,23 @@ export default function (props) {
         setAllDataSource(temp);
         setLoading(false);
     }
+
     useEffect(() => {
-        f(); // Permet d'appeller une fonction asynchrone
+        renderResults(); // Permet d'appeller une fonction asynchrone
     }, [internetAvailable])
+
+    useFocusEffect(
+        React.useCallback(() => {
+            // Rechargez les données lorsque la page prend le focus
+            reRender = async () => {await renderResults()};
+            reRender();
+        }, [])
+    );
+
     function reload() {
-        f();
+        renderResults();
     }
+
     return <ParcoursChoice
         {...props} commune={commune}
         allDataSource={allDataSource}

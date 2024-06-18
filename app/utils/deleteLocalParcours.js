@@ -1,37 +1,29 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import loadParcoursLocally from "./loadParcoursLocally";
+import loadParcoursLocally, { getParcoursFromCommuneLocally } from "./loadParcoursLocally";
 
 /**
  * delete the parcours from disk
  * @param identifiant 
  * @returns 
  */
-export default async function deleteLocalParcours(identifiant) {
+export default async function deleteLocalParcours(identifiant, commune) {
 	console.log("deleting the id " + identifiant);
-	let temp = await loadParcoursLocally(identifiant);
-	if (temp == null) {// le parcours n'est pas sur le disque
-		console.log("Parcours already gone...")
+	let temp = await getParcoursFromCommuneLocally(commune);
+	temp = temp.filter((item) => item.identifiant === identifiant);
+	if (temp == null) { // le parcours n'est pas sur le disque
+		console.log("Circuit not in storage...")
 		return undefined;
-	} else {
-
-		// obtention des informations générales
-		let parcours = temp.general;
-
-		// suppression du parours et de ses étapes
-		deleteObject(identifiant);
-
-		//suppression de l'id dans la commune
-		let commune = parcours.commune;
+	} else { //suppression de l'id dans la commune
 		temp = await AsyncStorage.getItem("commune." + commune);
 		if (temp != null) {
 			let walks = JSON.parse(temp);
 			walks = walks.filter((item) => item.identifiant != identifiant);
+			console.log(walks);
 			if (walks.length > 0) {
 				AsyncStorage.setItem("commune." + commune, JSON.stringify(walks));
 			} else {
-
-				// suppression de la commune si plus de parcours
 				AsyncStorage.removeItem("commune." + commune);
+				// suppression de la commune si plus de parcours
 				temp = await AsyncStorage.getItem("commune");
 				if (temp != null) {
 					let communes = JSON.parse(temp);
@@ -63,5 +55,5 @@ async function deleteObject(key) {
 
 	// Supression des morceaux de l'objet
 	await AsyncStorage.multiRemove(keys);
-	await AsyncStorage.getItem(key);
+	await AsyncStorage.removeItem(key);
 }
