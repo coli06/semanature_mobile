@@ -1,41 +1,53 @@
 import React, { Component, useEffect, useState } from 'react';
-import { View, Text, Image, BackHandler, ScrollView } from 'react-native';
+import { View, Text, Image, BackHandler, ScrollView, TouchableOpacity } from 'react-native';
 import styles from './TransitionInfo.component.style';
 import TopBarre from './../../../components/TopBarre/TopBarre.component'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NextPage from './../../components/NextPage/NextPage.component'
 import { useNavigation } from '@react-navigation/native';
 import { parseText } from '../../../utils/parseText';
-import {db} from "../../../config/firebaseConfig";
-import { collection, getDocs, getDoc, doc, query, where } from "firebase/firestore";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-    getParcoursFromCommune,
-    getAllCommunes,
-    getParcoursContents,
-    getAllDataFromCollection, displayParcoursForCommune
-} from "../../../utils/queries";
-import loadParcoursLocally from "../../../utils/loadParcoursLocally";
-
+import { Audio } from 'expo-av';
 
 class TransitionInfo extends Component {
     constructor(props) {
         super(props);
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        this.state = {
+            sound: null
+        };
     }
+
     componentDidMount() {
         const { parcours } = this.props;
         const size = parcours.length;
         console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
-    
+
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+        if (this.state.sound) {
+            this.state.sound.unloadAsync();
+        }
     }
-    
+
     handleBackButtonClick() {
         return true;
+    }
+
+    async playSound() {
+        const { sound } = this.state;
+        if (sound) {
+            await sound.unloadAsync();
+        }
+        const { currentGame } = this.props;
+        if (currentGame.son_url) {
+            const { sound } = await Audio.Sound.createAsync(
+                { uri: currentGame.son_url }
+            );
+            this.setState({ sound });
+            await sound.playAsync();
+        }
     }
 
     render() {
@@ -43,12 +55,8 @@ class TransitionInfo extends Component {
         const title = this.props.currentGame.nom;
         const illustration = this.props.currentGame.image_url;
         const etapeMax = this.props.parcoursInfo.etape_max;
-        if (etapeMax === undefined) {
-            var topBarreName = "";
-        } else {
-            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
-        }
-        console.log(etapeMax);
+        let topBarreName = etapeMax === undefined ? "" : `Étape : ${this.props.currentGame.n_etape}/${etapeMax}`;
+        
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
                 <TopBarre name={topBarreName} />
@@ -56,8 +64,13 @@ class TransitionInfo extends Component {
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
                             <Text style={styles.title}>{title}</Text>
-                            {(illustration != '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
+                            {illustration !== '' && <Image source={{ uri: illustration }} style={styles.areaImage} />}
                             <Text style={styles.description}>{paragraph}</Text>
+                            {this.props.currentGame.son_url && (
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                         <NextPage
                             pageName="GamePage"
@@ -74,4 +87,3 @@ export default function (props) {
     const navigation = useNavigation();
     return <TransitionInfo {...props} navigation={navigation} />
 }
-//<Image source={illustration} style={styles.image} />

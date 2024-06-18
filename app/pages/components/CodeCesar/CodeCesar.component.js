@@ -1,93 +1,108 @@
 import React, { Component } from 'react';
-import { View, Text, Image, BackHandler, TextInput, ScrollView } from 'react-native';
+import { View, Text, Image, BackHandler, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Audio } from 'expo-av'; // Import Audio from expo-av for sound handling
 import styles from './CodeCesar.component.style';
 import TopBarre from '../../../components/TopBarre/TopBarre.component'
-import { useNavigation } from '@react-navigation/native';
 import Cesar from './Chiffrage';
 import NextPage from '../NextPage/NextPage.component';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import NormalizeStrings from './../../../utils/normalizeStrings';
-import {getParcoursContents} from "../../../utils/queries";
+import { getParcoursContents } from "../../../utils/queries";
 
-/** 
- * Classe du component pour le jeu Code César
- */
 class CodeCesar extends Component {
     constructor(props) {
         super(props);
-        // récupère le texte initial et le décalage puis retient le texte crypté dans 'newText'.
         this.state = {
             newText: Cesar(NormalizeStrings(this.props.currentGame.texteBrut), parseInt(this.props.currentGame.decalage)),
+            isSoundLoaded: false,
+            sound: null,
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
     componentDidMount() {
-        const { parcours } = this.props;
-        const size = parcours.length;
-        console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-    }
-    
-    componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+        this.loadSound();
     }
 
-    /**
-     * Permet de bloquer le retour arrière
-     * @returns 
-     */
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+        this.unloadSound();
+    }
+
     handleBackButtonClick() {
         return true;
     }
 
-    /**
-     * Permet de se souvenir de l'entrée de l'utilisateur
-     * @param {*} input 
-     * @returns 
-     */
-    handleInputTextChange = (input) => this.setState({ decoded: input })
+    handleInputTextChange = (input) => {
+        this.setState({ decoded: input });
+    }
+
+    async loadSound() {
+        const { son_url } = this.props.currentGame;
+        if (son_url && son_url !== '') {
+            const { sound } = await Audio.Sound.createAsync(
+                { uri: son_url },
+                { shouldPlay: false }
+            );
+            this.setState({ sound, isSoundLoaded: true });
+        }
+    }
+
+    async unloadSound() {
+        if (this.state.sound) {
+            await this.state.sound.unloadAsync();
+        }
+    }
+
+    async playSound() {
+        try {
+            await this.state.sound.playAsync();
+        } catch (error) {
+            console.error('Failed to play sound', error);
+        }
+    }
 
     render() {
-        const question = this.props.currentGame.question;
-        const title = this.props.currentGame.nom;
-        const etapeMax = this.props.parcoursInfo.etape_max;
-        if (etapeMax === undefined) {
-            var topBarreName = "";
-        } else {
-            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
-        }
+        const { question, nom, etape_max, n_etape, image_url } = this.props.currentGame;
+        const topBarreName = etape_max ? `Étape : ${n_etape}/${etape_max}` : '';
 
         const icone = require('./../../../assets/code_cesar_icone.png');
-        const illustration = this.props.currentGame.image_url;
 
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
                 <TopBarre name={topBarreName} />
                 <View style={styles.globalContainer}>
-                    <ScrollView contentContainerStyle={styles.scrollViewContainer} styel={styles.scrollView}>
+                    <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
-
-                            <MainTitle title={title} icone={icone} />
-                            {(illustration !== '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
-                            <Text style={styles.description} >{question}</Text>
-                            <Text style={styles.encodedText} >{this.state.newText}</Text>
+                            <MainTitle title={nom} icone={icone} />
+                            {image_url !== '' && <Image source={{ uri: image_url }} style={styles.areaImage} />}
+                            <Text style={styles.description}>{question}</Text>
+                            <Text style={styles.encodedText}>{this.state.newText}</Text>
                             <TextInput style={styles.inputTextField} onChangeText={this.handleInputTextChange} editable={true} placeholder="CODE" />
-
                         </View>
                         <View style={styles.rightAlign}>
-                            <NextPage pageName={"GameOutcomePage"}
+                            <NextPage
+                                pageName={"GameOutcomePage"}
                                 parameters={{
                                     parcoursInfo: this.props.parcoursInfo,
                                     parcours: this.props.parcours,
                                     currentGame: this.props.currentGame,
-                                    // la condition détermine si l'entrée de l'utilisateur correspond au message initial
                                     win: this.state.decoded !== undefined && NormalizeStrings(this.state.decoded) === NormalizeStrings(this.props.currentGame.texteBrut),
                                 }}
                                 text="Valider"
                                 blockButton={true}
                             />
+                            {this.state.isSoundLoaded && (
+                                <TouchableOpacity
+                                    style={styles.audioButton}
+                                    onPress={() => this.playSound()}
+                                >
+                                    <Text style={styles.audioButtonText}>Play Sound</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     </ScrollView>
                 </View>
@@ -98,6 +113,5 @@ class CodeCesar extends Component {
 
 export default function (props) {
     const navigation = useNavigation();
-    return <CodeCesar {...props} navigation={navigation} />
+    return <CodeCesar {...props} navigation={navigation} />;
 }
-
