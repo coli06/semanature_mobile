@@ -18,19 +18,16 @@ class TransitionInfo extends Component {
     }
 
     componentDidMount() {
-        const { parcours } = this.props;
-        const size = parcours.length;
-        console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
-
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
         if (this.state.sound) {
             this.state.sound.unloadAsync();
         }
     }
-
+    
     handleBackButtonClick() {
         return true;
     }
@@ -55,8 +52,11 @@ class TransitionInfo extends Component {
         const title = this.props.currentGame.nom;
         const illustration = this.props.currentGame.image_url;
         const etapeMax = this.props.parcoursInfo.etape_max;
-        let topBarreName = etapeMax === undefined ? "" : `Étape : ${this.props.currentGame.n_etape}/${etapeMax}`;
-        
+        if (etapeMax === undefined) {
+            var topBarreName = "";
+        } else {
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+        }
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
                 <TopBarre name={topBarreName} />
@@ -64,7 +64,7 @@ class TransitionInfo extends Component {
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
                             <Text style={styles.title}>{title}</Text>
-                            {illustration !== '' && <Image source={{ uri: illustration }} style={styles.areaImage} />}
+                            {(illustration !== '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
                             <Text style={styles.description}>{paragraph}</Text>
                             {this.props.currentGame.audio_url && (
                                 <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>

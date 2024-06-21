@@ -9,6 +9,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import { Audio } from 'expo-av';
 
+
+/**
+ * Classe du component pour le jeu calcul pyramidale
+ */
 class Pyramid extends Component {
     constructor(props) {
         super(props);
@@ -16,13 +20,12 @@ class Pyramid extends Component {
             lastCircleValue: '',
             sound: null,
             confirmClicked: false,
-            s: generateValues(this.props.currentGame.nombre)
+            s: generateValues(this.props.currentGame.nombre) // initialise les valeurs des premiers cercles avec la fonction generateValues
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
     componentDidMount() {
-        const { parcours } = this.props;
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
     
@@ -66,8 +69,12 @@ class Pyramid extends Component {
         const result = this.props.currentGame.nombre;
         const illustration = this.props.currentGame.image_url;
         const etapeMax = this.props.parcoursInfo.etape_max;
-        const topBarreName = etapeMax === undefined ? "" : `Étape : ${this.props.currentGame.n_etape}/${etapeMax}`;
-        const textRegles = "Remplir la pyramide jusqu'en bas selon le principe suivant : chaque case vide doit contenir la somme des deux cases qui se trouvent au-dessus";
+        if (etapeMax === undefined) {
+            var topBarreName = "";
+        } else {
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+        }
+        const textRegles = "Remplir la pyramide jusqu'en bas selon le principe suivant : chaque case vide doit contenir la somme des deux cases qui se trouvent au-dessus"
         const icone = require('./../../../assets/calcul_pyramidal_icone.png');
 
         return (
@@ -78,16 +85,18 @@ class Pyramid extends Component {
                         <View style={styles.card}>
 
                             <MainTitle title={title} icone={icone} />
-                            {illustration !== '' && <Image source={{ uri: illustration }} style={styles.areaImage} />}
+                            {(illustration !== '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
                             <Text style={styles.description}>{textRegles}</Text>
                             <Text style={styles.description}>{question}</Text>
 
                             <View style={styles.gameArea}>
+
                                 <CircleLine count={4} edit={false} preFill={true} s={this.state.s} />
                                 <CircleLine count={3} edit={true} preFill={false} />
                                 <CircleLine count={2} edit={true} preFill={false} />
                                 <CircleLine count={1} edit={true} onChangeText={this.handleInputTextChange} value={this.state.lastCircleValue} preFill={false} />
-                            </View>
+                            
+			    </View>
 
                             {this.props.currentGame.audio_url && (
                                 <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
@@ -102,11 +111,14 @@ class Pyramid extends Component {
                                 onPress={() => {
                                     this.handleConfirmClicked();
 
-                                    // Logic to validate the answer
+                                    // dans la fonction generateValues, on récupère seulement les deux premières unités du résultat
+                                    // pour que le résultat soit cohérent, il faut appliquer la même transformation ici
                                     var win = 0;
                                     var newResult = parseInt(String(result).substring(0, 2), 10);
-                                    if (Math.trunc(newResult) === 0) {
-                                        newResult *= 10;
+                                    // de la même manière que dans generateValues, si le résultat est un chiffre, 
+                                    // il deviendra un nombre décimal qu'il faut donc multiplier par 10 pour retrouver la bonne valeure
+                                    if (Math.trunc(newResult) == 0) {
+                                        newResult = newResult * 10;
                                     }
                                     if (parseInt(this.state.lastCircleValue) === newResult) {
                                         win = 1;

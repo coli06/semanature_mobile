@@ -3,10 +3,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from '@react-navigation/native';
 import React, { Component, useEffect, useState } from 'react';
-import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import { getAllCommunes } from './../../../utils/queries';
 import styles from './SearchCommune.component.style';
 import NormalizeStrings from './../../../utils/normalizeStrings';
+import databaseService from '../../../utils/localStorage';
 
 /*
 */
@@ -94,6 +95,10 @@ export default function (props) {
             if (netInfoState.isInternetReachable != internetAvailable) {
                 setInternetAvailable(netInfoState.isInternetReachable);
             }
+
+            if (!netInfoState.isInternetReachable) {
+                Alert.alert("Connexion Internet indisponible", "Merci de réessayer une fois qu'Internet sera disponible");
+            }
         };
         checkInternetAvailability();
     }, []);
@@ -116,8 +121,15 @@ export default function (props) {
         }
         if (temp == undefined || temp.length == 0) {
             // si on n'a pas accès à la firebase, on regarde les communes disponibles en local
-            temp = await AsyncStorage.getItem('commune');
-            temp = (temp == null) ? new Array() : JSON.parse(temp);
+            databaseService.getAllCommunes(
+                (communes) => {
+                    temp = communes ?? new Array();
+                },
+                (errorMessage) => {
+                    console.error(errorMessage);
+                    temp = new Array();
+                }
+            );
         }
 
         // attribution des communes aux bonnes variables

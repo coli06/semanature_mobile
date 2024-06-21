@@ -61,7 +61,7 @@ function Profil() {
                             </View>
                             <View style={styles.iconTextContainer}>
                                 <Icon name="map-marker" color={'#0C8711'} size={20} />
-                                <Text style={styles.text}> Commune : {game.commune}</Text>
+                                <Text style={styles.text}>  {game.commune}</Text>
                             </View>
                             <View style={styles.iconTextContainer}>
                                 <Icon name="seal" color={'#0C8711'} size={20} />

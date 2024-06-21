@@ -14,18 +14,17 @@ export default StyleSheet.create({
         textAlign: 'justify',
         width: Dimensions.get('window').width * 0.9,
         padding: 3,
+        marginTop: 15,
     },
 
-    title: {
-        ...common.title,
-        marginTop: 15
-    },
     scrollViewContainer: {
         ...common.scrollViewContainer,
     },
+    
     scrollView: {
         ...common.scrollView,
     },
+
     outsideSafeArea: {
         ...common.outsideSafeArea,
     },

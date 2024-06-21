@@ -9,7 +9,6 @@ import NextPage from '../NextPage/NextPage.component';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import NormalizeStrings from './../../../utils/normalizeStrings';
-import { getParcoursContents } from "../../../utils/queries";
 
 class CodeCesar extends Component {
     constructor(props) {

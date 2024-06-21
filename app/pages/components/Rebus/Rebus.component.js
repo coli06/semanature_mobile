@@ -8,7 +8,6 @@ import TopBarre from '../../../components/TopBarre/TopBarre.component';
 import NextPage from './../../components/NextPage/NextPage.component';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import NormalizeStrings from './../../../utils/normalizeStrings';
-import { getParcoursContents } from "../../../utils/queries";
 
 class Rebus extends Component {
     constructor(props) {
@@ -21,9 +20,6 @@ class Rebus extends Component {
     }
 
     componentDidMount() {
-        const { parcours } = this.props;
-        const size = parcours.length;
-        console.log(parcours[size - 1].parcoursId);
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
 
@@ -33,7 +29,7 @@ class Rebus extends Component {
             this.state.sound.unloadAsync();
         }
     }
-
+    
     handleBackButtonClick() {
         return true;
     }
@@ -62,15 +58,17 @@ class Rebus extends Component {
     }
 
     render() {
-        const { currentGame, parcoursInfo, parcours } = this.props;
-        const question = currentGame.question;
-        const reponse = NormalizeStrings(currentGame.reponse);
-        const description = currentGame.description;
-        const title = currentGame.nom;
-        const etapeMax = parcoursInfo.etape_max;
-        let topBarreName = etapeMax === undefined ? "" : `Étape : ${currentGame.n_etape}/${etapeMax}`;
+        const question = this.props.currentGame.question;
+        const reponse = NormalizeStrings(this.props.currentGame.reponse);
+        const description = this.props.currentGame.description;
+        const title = this.props.currentGame.nom;
+        const etapeMax = this.props.parcoursInfo.etape_max;
+        if (etapeMax === undefined) {
+            var topBarreName = "";
+        } else {
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+        }
         const icone = require('./../../../assets/rebus_icone.png');
-
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
                 <TopBarre name={topBarreName} />
@@ -78,9 +76,9 @@ class Rebus extends Component {
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
                             <MainTitle title={title} icone={icone} />
-                            <Text style={styles.description}>{question}</Text>
-                            <Text style={styles.description}>{description}</Text>
-                            <Image source={{ uri: currentGame.image_url }} style={styles.areaImage} />
+                            <Text style={styles.description} >{question}</Text>
+                            <Text style={styles.description} >{description}</Text>
+                            <Image source={{ uri: this.props.currentGame.image_url }} style={styles.areaImage} />
                             {currentGame.audio_url && (
                                 <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
                                     <Text style={styles.audioButtonText}>🔊</Text>
@@ -95,12 +93,12 @@ class Rebus extends Component {
                         </View>
                         <View style={styles.rightAlign}>
                             <NextPage
-                                pageName="GameOutcomePage"
+                                pageName={"GameOutcomePage"}
                                 parameters={{
-                                    parcoursInfo,
-                                    parcours,
-                                    currentGame,
-                                    win: NormalizeStrings(this.state.proposition) === reponse,
+                                    parcoursInfo: this.props.parcoursInfo,
+                                    parcours: this.props.parcours,
+                                    currentGame: this.props.currentGame,
+                                    win: NormalizeStrings(this.state.proposition) == reponse,
                                 }}
                                 text="Valider"
                                 blockButton={true}

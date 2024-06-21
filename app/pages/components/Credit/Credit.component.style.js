@@ -4,8 +4,17 @@ import common from '../../../styles/common.style.js'
 
 export default StyleSheet.create({
     card: {
-        ...common.card,
-        backgroundColor: theme.BACKGROUND_COLOR_WHITE
+        paddingVertical: theme.CONTAINER_PADDING,
+        backgroundColor: theme.BACKGROUND_COLOR_WHITE,
+		minWidth: '90%',
+		maxWidth: '90%',
+		borderRadius: 30,
+		margin: 10,
+		padding: 10,
+		paddingBottom: 30,
+		justifyContent: 'space-between',
+		alignItems: 'flex-start',
+		flex: -1,
     },
     title: {
         ...common.title

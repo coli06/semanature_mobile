@@ -1,7 +1,6 @@
 import { db } from '../config/firebaseConfig';
 import { collection, getDocs, getDoc, doc, query, where } from "firebase/firestore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert } from 'react-native';
 
 //Return commune names in an array that match with 'cityName'
 export async function searchAndGetCommunes(cityName) {
@@ -64,7 +63,7 @@ export async function getParcoursFromCommune(cityName) {
 		if (!blocked) {
 			image_url = (doc.data().image_url) == "" ? doc.data().image_url : await getDataURLFromURL(doc.data().image_url);
 		}
-		const pa = {
+		const temp = {
 			identifiant: doc.id,
 			titre: doc.data().titre,
 			description: doc.data().description,
@@ -74,7 +73,7 @@ export async function getParcoursFromCommune(cityName) {
 			image_url: image_url,
 			etape_max: doc.data().etape_max
 		}
-		parcours.push(pa);
+		parcours.push(temp);
 	}));
 	return parcours;
 }
@@ -101,20 +100,15 @@ export async function getParcoursContents(id) {
 
 		const docRefParcours = doc(db, "parcours", id);
 		const docSnap = await getDoc(docRefParcours);
-		const pathSubColEtape = "/parcours/" + docSnap.id + "/etape";
+		const pathSubColEtape = "/parcours/" + id + "/etape";
+		const docRefCommune = doc(db, "commune", docSnap.data().commune.toLowerCase());
+		const communeDocSnap = await getDoc(docRefCommune);
 		const res = {};
 
-		if (docSnap.exists()) {
+		if (docSnap.exists() && communeDocSnap.exists()) {
 
-			// Get general parcours info
-			const generalInfo = {
-				commune: docSnap.data().commune,
-				titre: docSnap.data().titre,
-				description: docSnap.data().description,
-				etape_max: docSnap.data().etape_max
-			}
-
-			res.general = generalInfo;
+			// Get postal code
+			res.code_postal = communeDocSnap.data().code_postal;
 
 			// Get all docs at pathSubColEtape
 			const querySnapshot = await getDocs(collection(db, pathSubColEtape));
@@ -174,8 +168,6 @@ async function getDataURLFromURL(url) {
     }
 }
 
-
-
 /**
  * Vérifie si le quota de requête du jour a été dépassé, et incrémente le nombre enregistré
  * @param {number} warningLimit 
@@ -222,7 +214,6 @@ async function checkQueryQuota(warningLimit, blockLimit) {
 	// }
 	return "ok";
 }
-
 
 //Fonction pour la carte
 

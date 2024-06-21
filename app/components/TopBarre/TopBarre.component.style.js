@@ -18,10 +18,10 @@ export default StyleSheet.create({
 		textAlign: 'center',
 	},
 	icone: {
-		width: 46,
-		height: 46,
+		width: 40,
+		height: 40,
 		resizeMode: 'contain',
 		position: 'absolute',
-		left: 5,
+		left: 7,
 	}
 });

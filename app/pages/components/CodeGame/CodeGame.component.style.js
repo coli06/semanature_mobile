@@ -42,6 +42,9 @@ export default StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center'
     },
+    scrollView: {
+        ...common.scrollView,
+    },
     audioButtonText: {
         fontSize: 20,
     }

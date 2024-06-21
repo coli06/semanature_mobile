@@ -13,24 +13,22 @@ class Qcm extends Component {
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state = {
             confirmClicked: false,
-            sound: null, 
+            sound: null, // State variable to hold the sound object
         };
     }
 
     componentDidMount() {
-        const { parcours } = this.props;
-        const size = parcours.length;
-        console.log(parcours[size - 1].parcoursId);
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
-
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+        // Unload the sound when component is unmounted
         if (this.state.sound) {
             this.state.sound.unloadAsync();
         }
     }
-
+    
     handleBackButtonClick() {
         return true;
     }
@@ -55,6 +53,7 @@ class Qcm extends Component {
             this.setState({ confirmClicked: true });
         }
 
+        // Check if audio_url exists and is not blank
         const audio_url = this.props.currentGame.audio_url;
         if (audio_url && audio_url !== '') {
             try {
@@ -70,11 +69,14 @@ class Qcm extends Component {
 
     render() {
         const etapeMax = this.props.parcoursInfo.etape_max;
-        const topBarreName = etapeMax ? `Étape : ${this.props.currentGame.n_etape}/${etapeMax}` : '';
-        const title = this.props.currentGame.nom;
+        if (etapeMax === undefined) {
+            var topBarreName = "";
+        } else {
+            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+        }
+        const title = this.currentGame.nom
         const icone = require('./../../../assets/qcm_icone.png');
         const illustration = this.props.currentGame.image_url;
-
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
                 <TopBarre name={topBarreName} />

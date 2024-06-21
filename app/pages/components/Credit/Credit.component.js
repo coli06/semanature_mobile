@@ -21,7 +21,7 @@ class Credit extends Component {
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
-                            <Text style={styles.title}>Un jeu conçu et édité par: </Text>
+                            <Text style={styles.title}>Un jeu conçu et édité par</Text>
                             <Text style={styles.description} >La LPO AuRA en partenariat avec l'école d'ingénieurs Télécom Saint-Étienne</Text>
                             <View style={styles.gameArea}>
                                 <Image source={PlaceholderLogoLPOAura} style={styles.areaImage} />

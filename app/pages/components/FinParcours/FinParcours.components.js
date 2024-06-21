@@ -1,15 +1,12 @@
 import React, { Component, useEffect } from 'react';
 import { View, Text, TouchableOpacity, BackHandler, Linking, ScrollView } from 'react-native';
 import styles from './FinParcours.components.style';
-
-import TopBarre from './../../../components/TopBarre/TopBarre.component';
-import NextPage from './../../components/NextPage/NextPage.component';
+import TopBarre from '../../../components/TopBarre/TopBarre.component';
+import NextPage from '../../components/NextPage/NextPage.component';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import MainTitle from './../../../components/MainTitle/MainTitle.component';
-import { getParcoursFromCommuneLocally } from '../../../utils/loadParcoursLocally';
-import saveParcours, { saveObject, saveGameHistory } from '../../../components/ParcoursCard/saveParcours';
+import MainTitle from '../../../components/MainTitle/MainTitle.component';
+import databaseService from '../../../utils/localStorage';
 
 class FinParcoursPage extends Component {
     constructor(props) {
@@ -20,26 +17,10 @@ class FinParcoursPage extends Component {
         const scoremax = this.props.currentGame.score_max
         const parcoursId = this.props.currentGame.parcoursId
 
-        // sauvegarde du score (et du score max si pas encore sauvegardé)
-        getParcoursFromCommuneLocally(props.parcours.commune).then((parcours) => {
-            parcours = parcours.filter((item) => item.identifiant === parcoursId);
-            if (parcours == null) {
-                return;
-            }
-            if (parcours.general.score == null) {
-                parcours.general.score = score;
-                parcours.general.score_max = scoremax;
-            } else {
-                parcours.general.score = Math.min(Math.max(score, parcours.general.score), scoremax);
-                parcours.general.score_max = scoremax;
-            }
-            saveObject(parcoursId, JSON.stringify(parcours));
-            console.log("score : ", score);
-            console.log("scoremax : ", scoremax);
-            console.log("parcours.general.score : ", parcours.general.score);
-            console.log("parcours.general.score_max : ", parcours.general.score_max);
-            saveGameHistory(parcours, score);
-        })
+        // sauvegarde du score et de la partie dans l'historique (et du score max si pas encore sauvegardé)
+        databaseService.saveGameInHistory(parcoursId, score, scoremax,
+            (errorMessage) => { console.error(errorMessage); }
+        );
     }
 
     // empêche le retour en arrière de la page
