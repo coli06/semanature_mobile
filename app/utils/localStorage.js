@@ -121,16 +121,6 @@ class LocalDatabaseService {
                                 });
                             }
                         });
-                        tx.executeSql(
-                            `SELECT * FROM Parcours`,
-                            [],
-                            (tx, results) => {
-                                console.log("on dirait que y'a " + results.rows.length + " parcours (" + results.rows.item(0).titre + ")");
-                            },
-                            (tx, error) => {
-                                console.error("Parcours SELECT error : " + error.message);
-                            }
-                        )
                     }, false);
 
                     if (successCallback) successCallback();

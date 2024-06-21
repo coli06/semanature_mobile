@@ -17,8 +17,8 @@ const ParcoursCard = (props) => {
             const parcours = await databaseService.checkParcours(props.parcours.identifiant);
             if (!parcours || parcours.rows.length === 0) {
                 props.setDataLoaded(false);
-                props.setScore(null);
-                props.setScoreMax(null);
+                setScore(null);
+                setScoreMax(null);
             } else {
                 props.setDataLoaded(true);
                 if (parcours.length > 0 && props.image !== parcours[0].image_url) {
@@ -54,13 +54,13 @@ const ParcoursCard = (props) => {
         if (image_url !== '') {
             props.setImage(image_url);
         }
-        updateScores();
     },[])
 
     useFocusEffect(
         React.useCallback(() => {
             // Rechargez les données lorsque la page prend le focus
             checkLocalSave();
+            updateScores();
         }, [])
     );
 
@@ -169,10 +169,6 @@ export default function (props) {
                          reload={props.reload}
                          refresh={props.refresh}
                          internetAvailable={props.internetAvailable}
-                         score={score}
-                         setScore={setScore}
-                         scoreMax={scoreMax}
-                         setScoreMax={setScoreMax}
                          dataLoaded={dataLoaded}
                          setDataLoaded={setDataLoaded}
                          image={image}

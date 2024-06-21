@@ -7,7 +7,6 @@ import TopBarre from '../../../components/TopBarre/TopBarre.component';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import NormalizeStrings from './../../../utils/normalizeStrings';
-import {getParcoursContents} from "../../../utils/queries";
 
 class CodeGame extends Component {
     constructor(props) {

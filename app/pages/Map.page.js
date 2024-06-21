@@ -13,7 +13,6 @@ class MapPage extends Component {
   render() {
     return (
       <SafeAreaView style={common.outsideSafeArea}>
-        {/* Ensure TopBarre component is not causing the issue */}
         <TopBarre name='Carte des parcours' />
         <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
           <MapComponent />

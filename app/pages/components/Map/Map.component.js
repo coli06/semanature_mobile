@@ -1,14 +1,14 @@
 import React, { useEffect, useState, memo } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as Location from 'expo-location';
 import styles from './Map.component.style';
-import { getParcoursDonne } from './../../../utils/queries'; // Ensure the path is correct
-import styles from './Map.component.style'; // Import styles
+import { getParcoursDonne } from './../../../utils/queries';
+import NetInfo from "@react-native-community/netinfo";
 
 const MapComponent = memo(() => {
   const [location, setLocation] = useState(null); // State to store user location
-  const [parcours, setParcours] = useState([]); // State to store hiking spots
+  const [parcours, setParcours] = useState([]); // State to store circuits
 
   useEffect(() => {
     let isMounted = true; // Flag to check if component is mounted
@@ -16,14 +16,15 @@ const MapComponent = memo(() => {
     const fetchData = async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync(); // Request location permissions
-        if (status !== 'granted') {
-          console.log('Permission to access location was denied');
+        if (status === 'granted') {
+          console.log('Permission to access location was allowed');
+          const temp = await Location.getCurrentPositionAsync({}); // Get current location
+          if (isMounted) {
+            setLocation(temp); // Set location state if component is still mounted
+          }
+        } else {
+          console.log('Permission to access location was allowed');
           return;
-        }
-
-        const location = await Location.getCurrentPositionAsync({}); // Get current location
-        if (isMounted) {
-          setLocation(location); // Set location state if component is still mounted
         }
 
         const temp = await getParcoursDonne(); // Fetch circuits from Firebase
@@ -43,15 +44,45 @@ const MapComponent = memo(() => {
     };
   }, []);
 
-  // If location is not yet available, show a loading indicator
+  const [internetAvailable, setInternetAvailable] = useState(false);
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setInternetAvailable(state.isInternetReachable);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  let barycentre;
   if (!location) {
-    return (
-      <View style={styles.container}>
-          <Text>Position inaccessible</Text>
-          <Text>merci de vérifier que la position et Internet sont activés</Text>
-      </View>
-    );
+    barycentre = {latitude: 0, longitude: 0};
+    parcours.forEach(p => {
+      barycentre.latitude += p.latitude;
+      barycentre.longitude += p.longitude;
+    })
+  } else {
+    console.log("? ", location);
+    barycentre.latitude = location.coords.latitude;
+    barycentre.longitude = location.coords.longitude;
   }
+
+  // If Internet is not available, show a loading indicator
+  async function checkInternet() {
+    const netInfoState = await NetInfo.fetch();
+    if (!netInfoState.isInternetReachable) {
+      return (
+        <View style={styles.container}>
+            <Text>Internet indisponible</Text>
+            <Text>merci de vérifier que la connexion Internet est disponible</Text>
+        </View>
+      );
+    }
+  }
+  checkInternet();
+
+  const renderLocation = (location === null);
 
   // HTML content for the WebView, including Leaflet map setup
   const htmlContent = `
@@ -79,7 +110,7 @@ const MapComponent = memo(() => {
       <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
       <script>
         // Initialize Leaflet map
-        const map = L.map('map').setView([${location.coords.latitude}, ${location.coords.longitude}], 13);
+        const map = L.map('map').setView([${barycentre.latitude}, ${barycentre.longitude}], 13);
 
         // Set map tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -87,68 +118,70 @@ const MapComponent = memo(() => {
         }).addTo(map);
 
         // Default blue marker for current location
-        const blueMarker = L.icon({
+        const posMarker = L.icon({
           iconUrl: 'https://cdn1.iconfinder.com/data/icons/navigation-197/64/position_marker_current_navigation_user-256.png',
           iconSize: [100, 100],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
+          iconAnchor: [50, 100],
+          popupAnchor: [0, -100],
           shadowSize: [41, 41]
         });
-        L.marker([${location.coords.latitude}, ${location.coords.longitude}], { icon: blueMarker }).addTo(map)
-          .bindPopup('Vous êtes ici !')
-          .openPopup();
+        if (${renderLocation}) {
+          L.marker([${location.coords.latitude}, ${location.coords.longitude}], { icon: posMarker }).addTo(map)
+            .bindPopup('Vous êtes ici !')
+            .openPopup();
+        }
 
-        // Add markers for hiking spots
-        const hikingSpots = ${JSON.stringify(hikingSpots)};
-        hikingSpots.forEach(spot => {
+        // Add markers for circuits
+        const circuits = ${JSON.stringify(parcours)};
+        circuits.forEach(spot => {
           let markerIcon;
 
           if (spot.difficulte === 'Très facile') {
             markerIcon = L.icon({
               iconUrl: 'https://cdn-icons-png.freepik.com/256/183/183390.png?ga=GA1.1.1350229908.1718375323&semt=ais_hybrid',
               iconSize: [70, 70],
-              iconAnchor: [12, 41],
-              popupAnchor: [1, -34],
+              iconAnchor: [35, 35],
+              popupAnchor: [0, -70],
               shadowSize: [41, 41]
             });
           } else if (spot.difficulte === 'Facile') {
             markerIcon = L.icon({
               iconUrl: 'https://cdn-icons-png.freepik.com/256/9132/9132016.png?semt=ais_hybrid',
               iconSize: [70, 70],
-              iconAnchor: [12, 41],
-              popupAnchor: [1, -34],
+              iconAnchor: [35, 35],
+              popupAnchor: [0, -70],
               shadowSize: [41, 41]
             });
           } else if (spot.difficulte === 'Moyen') {
             markerIcon = L.icon({
               iconUrl:'https://cdn-icons-png.freepik.com/256/170/170384.png?semt=ais_hybrid',
               iconSize: [70, 70],
-              iconAnchor: [12, 41],
-              popupAnchor: [1, -34],
+              iconAnchor: [35, 35],
+              popupAnchor: [0, -70],
               shadowSize: [41, 41]
             });
           } else if (spot.difficulte === 'Difficile') {
             markerIcon = L.icon({
               iconUrl:'https://cdn-icons-png.freepik.com/256/252/252025.png?semt=ais_hybrid',
               iconSize: [70, 70],
-              iconAnchor: [12, 41],
-              popupAnchor: [1, -34],
+              iconAnchor: [35, 35],
+              popupAnchor: [0, -70],
               shadowSize: [41, 41]
             });
           } else if (spot.difficulte === 'Très difficile') {
             markerIcon = L.icon({
               iconUrl: 'https://cdn-icons-png.freepik.com/256/285/285807.png?ga=GA1.1.1350229908.1718375323&semt=ais_hybrid',
               iconSize: [70, 70],
-              iconAnchor: [12, 41],
-              popupAnchor: [1, -34],
+              iconAnchor: [35, 35],
+              popupAnchor: [0, -70],
               shadowSize: [41, 41]
             });
           } else {
             markerIcon = L.icon({
               iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
               iconSize: [25, 41],
-              iconAnchor: [12, 41],
-              popupAnchor: [1, -34],
+              iconAnchor: [12.5, 20.5],
+              popupAnchor: [0, -41],
               shadowSize: [41, 41]
             });
           }

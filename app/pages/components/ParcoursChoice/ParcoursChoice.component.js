@@ -101,6 +101,7 @@ export default function (props) {
         checkInitialInternetState();
 
         // Subscribe to internet connectivity changes
+        const [internetAvailable, setInternetAvailable] = useState(false);
         const unsubscribe = NetInfo.addEventListener(state => {
             if (internetAvailable !== state.isInternetReachable) {
                 setInternetAvailable(state.isInternetReachable);
