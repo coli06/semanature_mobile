@@ -103,11 +103,8 @@ class CodeGame extends Component {
                                 <Text style={styles.boutonText}>Valider</Text>
                             </TouchableOpacity>
                             {this.state.isSoundLoaded && (
-                                <TouchableOpacity
-                                    style={styles.audioButton}
-                                    onPress={() => this.playSound()}
-                                >
-                                    <Text style={styles.audioButtonText}>Play Sound</Text>
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
                                 </TouchableOpacity>
                             )}
                         </View>

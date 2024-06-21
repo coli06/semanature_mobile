@@ -40,7 +40,7 @@ const MapComponent = () => {
     };
   }, []);
 
-  const defaultLocation = { coords: { latitude: 48.8566, longitude: 2.3522 } }; // Default to Paris coordinates
+  const defaultLocation = { coords: { latitude: 48.8566, longitude: 2.3522 } }; 
   const mapLocation = location || defaultLocation;
 
   const htmlContent = `

@@ -72,11 +72,8 @@ class Charade extends Component {
                                 placeholder='RÉPONSE'
                             />
                             {this.props.currentGame.audio_url && this.props.currentGame.audio_url.trim() !== '' && (
-                                <TouchableOpacity
-                                    style={styles.audioButton}
-                                    onPress={() => this.playSound()}
-                                >
-                                    <Text style={styles.audioButtonText}>Play Sound</Text>
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
                                 </TouchableOpacity>
                             )}
                         </View>

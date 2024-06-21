@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, Image, TouchableOpacity, BackHandler, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Audio } from 'expo-av'; // Import Audio from expo-av for sound handling
-import styles from './FindIntruder.component.style'; // Import your style file
+import { Audio } from 'expo-av';
+import styles from './FindIntruder.component.style';
 import TopBarre from './../../../components/TopBarre/TopBarre.component';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
@@ -13,7 +13,7 @@ class FindIntruder extends Component {
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state = {
             confirmClicked: false,
-            sound: null, // State to hold the loaded sound
+            sound: null,
         };
     }
 
@@ -24,7 +24,7 @@ class FindIntruder extends Component {
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
         if (this.state.sound) {
-            this.state.sound.unloadAsync(); // Unload the sound when component unmounts
+            this.state.sound.unloadAsync();
         }
     }
 
@@ -43,7 +43,7 @@ class FindIntruder extends Component {
     async playSound() {
         const { sound } = this.state;
         if (sound) {
-            await sound.unloadAsync(); // Unload any previously loaded sound
+            await sound.unloadAsync();
         }
         const { currentGame } = this.props;
         if (currentGame.audio_url) {
@@ -68,7 +68,6 @@ class FindIntruder extends Component {
         const title = this.currentGame.nom;
         const icone = hasAudio ? require('./../../../assets/trouver_l_intrus_icone.png') : null;
 
-        // Legende texts
         const legendeText0 = this.currentGame.legende_tab ? this.currentGame.legende_tab[0] : '';
         const legendeText1 = this.currentGame.legende_tab ? this.currentGame.legende_tab[1] : '';
         const legendeText2 = this.currentGame.legende_tab ? this.currentGame.legende_tab[2] : '';
@@ -129,13 +128,9 @@ class FindIntruder extends Component {
                                 </View>
                             </View>
                             {hasAudio && (
-                                <TouchableOpacity
-                                    style={styles.audioButton}
-                                    onPress={() => this.playSound()}
-                                    disabled={this.state.confirmClicked}
-                                >
-                                    <Text style={styles.audioButtonText}>Play Sound</Text>
-                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                <Text style={styles.audioButtonText}>🔊</Text>
+                            </TouchableOpacity>
                             )}
                         </View>
                     </ScrollView>
