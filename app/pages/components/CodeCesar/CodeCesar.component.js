@@ -40,10 +40,10 @@ class CodeCesar extends Component {
     }
 
     async loadSound() {
-        const { son_url } = this.props.currentGame;
-        if (son_url && son_url !== '') {
+        const { audio_url } = this.props.currentGame;
+        if (audio_url && audio_url !== '') {
             const { sound } = await Audio.Sound.createAsync(
-                { uri: son_url },
+                { uri: audio_url },
                 { shouldPlay: false }
             );
             this.setState({ sound, isSoundLoaded: true });
@@ -95,11 +95,8 @@ class CodeCesar extends Component {
                                 blockButton={true}
                             />
                             {this.state.isSoundLoaded && (
-                                <TouchableOpacity
-                                    style={styles.audioButton}
-                                    onPress={() => this.playSound()}
-                                >
-                                    <Text style={styles.audioButtonText}>Play Sound</Text>
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
                                 </TouchableOpacity>
                             )}
                         </View>

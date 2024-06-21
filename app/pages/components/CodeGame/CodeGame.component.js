@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from 'react';
+import React, { Component } from 'react';
 import { View, Text, Image, TouchableOpacity, BackHandler, TextInput, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Audio } from 'expo-av'; // Import Audio from expo-av for sound handling
@@ -54,10 +54,10 @@ class CodeGame extends Component {
     }
 
     async loadSound() {
-        const { son_url } = this.props.currentGame;
-        if (son_url && son_url !== '') {
+        const { audio_url } = this.props.currentGame;
+        if (audio_url && audio_url !== '') {
             const { sound } = await Audio.Sound.createAsync(
-                { uri: son_url },
+                { uri: audio_url },
                 { shouldPlay: false }
             );
             this.setState({ sound, isSoundLoaded: true });

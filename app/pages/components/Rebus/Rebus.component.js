@@ -9,7 +9,6 @@ import NextPage from './../../components/NextPage/NextPage.component';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import NormalizeStrings from './../../../utils/normalizeStrings';
 
-
 class Rebus extends Component {
     constructor(props) {
         super(props);
@@ -45,10 +44,10 @@ class Rebus extends Component {
             await sound.unloadAsync();
         }
         const { currentGame } = this.props;
-        if (currentGame.son_url) {
+        if (currentGame.audio_url) {
             try {
                 const { sound: newSound } = await Audio.Sound.createAsync(
-                    { uri: currentGame.son_url }
+                    { uri: currentGame.audio_url }
                 );
                 this.setState({ sound: newSound });
                 await newSound.playAsync();
@@ -80,7 +79,7 @@ class Rebus extends Component {
                             <Text style={styles.description} >{question}</Text>
                             <Text style={styles.description} >{description}</Text>
                             <Image source={{ uri: this.props.currentGame.image_url }} style={styles.areaImage} />
-                            {currentGame.son_url && (
+                            {currentGame.audio_url && (
                                 <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
                                     <Text style={styles.audioButtonText}>🔊</Text>
                                 </TouchableOpacity>

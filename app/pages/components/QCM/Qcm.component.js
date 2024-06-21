@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import { View, Text, Image, TouchableOpacity, BackHandler, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Audio } from 'expo-av'; // Import Audio from Expo AV for sound handling
+import { Audio } from 'expo-av';
 import styles from './Qcm.component.style.js';
 import TopBarre from './../../../components/TopBarre/TopBarre.component';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 
-
 class Qcm extends Component {
-
     constructor(props) {
         super(props);
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
@@ -35,21 +33,34 @@ class Qcm extends Component {
         return true;
     }
 
-    currentGame = this.props.currentGame;
+    async playSound() {
+        const { sound } = this.state;
+        if (sound) {
+            await sound.unloadAsync();
+        }
+        const { currentGame } = this.props;
+        if (currentGame.audio_url) {
+            const { sound } = await Audio.Sound.createAsync(
+                { uri: currentGame.audio_url }
+            );
+            this.setState({ sound });
+            await sound.playAsync();
+        }
+    }
 
     handleConfirmClicked = async () => {
         if (!this.state.confirmClicked) {
             this.setState({ confirmClicked: true });
         }
 
-        // Check if son_url exists and is not blank
-        const son_url = this.props.currentGame.son_url;
-        if (son_url && son_url !== '') {
+        // Check if audio_url exists and is not blank
+        const audio_url = this.props.currentGame.audio_url;
+        if (audio_url && audio_url !== '') {
             try {
                 const { sound: newSound } = await Audio.Sound.createAsync(
-                    { uri: son_url } // Load sound from the provided URL
+                    { uri: audio_url }
                 );
-                this.setState({ sound: newSound }, () => newSound.playAsync()); // Play the loaded sound
+                this.setState({ sound: newSound }, () => newSound.playAsync());
             } catch (error) {
                 console.error('Error loading sound:', error);
             }
@@ -73,18 +84,23 @@ class Qcm extends Component {
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
                             <MainTitle title={title} icone={icone} />
-                            {(illustration !== '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
-                            <Text style={styles.description} > {this.currentGame.question} </Text>
+                            {illustration !== '' && <Image source={{ uri: illustration }} style={styles.areaImage} />}
+                            <Text style={styles.description}>{this.props.currentGame.question}</Text>
+                            {this.props.currentGame.audio_url && (
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
+                                </TouchableOpacity>
+                            )}
                             <View style={styles.gameZone}>
                                 <View style={styles.rowFlex}>
-                                    {this.currentGame.reponses_tab.map((reponse, index) => (
+                                    {this.props.currentGame.reponses_tab.map((reponse, index) => (
                                         <TouchableOpacity
                                             key={index}
                                             style={styles.bouton}
                                             disabled={this.state.confirmClicked}
                                             onPress={() => {
                                                 this.handleConfirmClicked();
-                                                const win = index === this.currentGame.index_bonneReponse ? 1 : 0;
+                                                const win = index === this.props.currentGame.index_bonneReponse ? 1 : 0;
                                                 this.props.navigation.navigate("GameOutcomePage", {
                                                     parcoursInfo: this.props.parcoursInfo,
                                                     parcours: this.props.parcours,

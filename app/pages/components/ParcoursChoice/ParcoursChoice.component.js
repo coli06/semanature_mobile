@@ -85,6 +85,20 @@ export default function (props) {
     const [loading, setLoading] = useState(true);
 
     let lastInternetState = false;
+    NetInfo.fetch()
+        .then((state) => {
+            if (internetAvailable != state.isInternetReachable) {
+                setInternetAvailable(state.isInternetReachable);
+            }
+        })
+        .catch((error) => {
+            console.error("Error while looking for Internet connection", error);
+        })
+    NetInfo.addEventListener(state => {
+        if (internetAvailable != state.isInternetReachable) {
+            setInternetAvailable(state.isInternetReachable);
+        }
+    })
     
     useEffect(() => {
         // Function to check initial internet connectivity
