@@ -1,57 +1,78 @@
-import React, { Component, useEffect } from 'react';
-import { View, Text, Image, BackHandler, ScrollView } from 'react-native';
-import styles from './Joke.component.style';
+import React, { Component } from 'react';
+import { View, Text, Image, BackHandler, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Audio } from 'expo-av';
+import styles from './Joke.component.style';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import TopBarre from './../../../components/TopBarre/TopBarre.component';
 import NextPage from './../../components/NextPage/NextPage.component';
-import {getParcoursContents} from "../../../utils/queries";
 
 class JokePage extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            sound: null,
+        };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
-    // empêche le retour en arrière
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
     
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+        if (this.state.sound) {
+            this.state.sound.unloadAsync();
+        }
     }
     
     handleBackButtonClick() {
         return true;
     }
 
-    render() {
-        const etapeMax = this.props.parcoursInfo.etape_max;
-        if (etapeMax === undefined) {
-            var topBarreName = "";
-        } else {
-            var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
+    async playSound() {
+        const { sound } = this.state;
+        if (sound) {
+            await sound.unloadAsync();
         }
-        // données à afficher
-        const paragraph = this.props.currentGame.texte;
-        const title = this.props.currentGame.nom;
-        const illustration = this.props.currentGame.image_url;
+        const { currentGame } = this.props;
+        if (currentGame.son_url) {
+            const { sound } = await Audio.Sound.createAsync(
+                { uri: currentGame.son_url }
+            );
+            this.setState({ sound });
+            await sound.playAsync();
+        }
+    }
+
+    render() {
+        const { currentGame, parcoursInfo, parcours } = this.props;
+        const etapeMax = parcoursInfo.etape_max;
+        const topBarreName = etapeMax === undefined ? "" : `Étape : ${currentGame.n_etape}/${etapeMax}`;
+        const paragraph = currentGame.texte;
+        const title = currentGame.nom;
+        const illustration = currentGame.image_url;
         const icone = require('./../../../assets/blague_icone.png');
-        // affichage
+
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
                 <TopBarre name={topBarreName} />
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
-                            <MainTitle title={title} icone={icone} />
-                            {(illustration != '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
-                            <Text style={styles.description}> {paragraph} </Text>
+                            <MainTitle title={title} icone={currentGame.son_url ? icone : null} />
+                            {illustration !== '' && <Image source={{ uri: illustration }} style={styles.areaImage} />}
+                            <Text style={styles.description}>{paragraph}</Text>
+                            {currentGame.son_url && (
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                         <NextPage
                             pageName="GamePage"
-                            parameters={{ parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours }}
+                            parameters={{ parcoursInfo, parcours }}
                         />
                     </ScrollView>
                 </View>
@@ -60,7 +81,6 @@ class JokePage extends Component {
     }
 }
 
-// wrapper du component dans une fonction
 export default function (props) {
     return <JokePage {...props} />
 }

@@ -2,7 +2,6 @@ import { Dimensions, StyleSheet } from 'react-native';
 import theme from '../../../styles/theme.style';
 import common from '../../../styles/common.style.js';
 
-
 export default StyleSheet.create({
     card: {
         ...common.card,
@@ -37,7 +36,7 @@ export default StyleSheet.create({
     text: {
         color: '#000000',
         fontSize: theme.FONT_SIZE_MEDIUM,
-        width: Dimensions.get('window').width * 0.9,
+        width: Dimensions.get('window').width * 2.0,
         textAlign: 'justify',
         padding: 3,
     },
@@ -45,7 +44,7 @@ export default StyleSheet.create({
     textBis: {
         color: '#000000',
         fontSize: theme.FONT_SIZE_MEDIUM,
-        width: Dimensions.get('window').width * 0.9,
+        width: Dimensions.get('window').width * 2.0,
         textAlign: 'left',
         padding: 3,
     },

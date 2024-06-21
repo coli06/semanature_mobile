@@ -7,7 +7,7 @@ import generateValues from './generateValues';
 import CircleLine from './CircleLine'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
-import {getParcoursContents} from "../../../utils/queries";
+import { Audio } from 'expo-av';
 
 
 /**
@@ -18,9 +18,10 @@ class Pyramid extends Component {
         super(props);
         this.state = {
             lastCircleValue: '',
+            sound: null,
+            confirmClicked: false,
+            s: generateValues(this.props.currentGame.nombre) // initialise les valeurs des premiers cercles avec la fonction generateValues
         };
-        // initialise les valeurs des premiers cercles avec la fonction generateValues
-        this.state = { s: generateValues(this.props.currentGame.nombre), confirmClicked: false };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
@@ -30,6 +31,9 @@ class Pyramid extends Component {
     
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+        if (this.state.sound) {
+            this.state.sound.unloadAsync();
+        }
     }
     
     handleBackButtonClick() {
@@ -43,6 +47,21 @@ class Pyramid extends Component {
     }
 
     handleInputTextChange = (input) => this.setState({ lastCircleValue: input })
+
+    async playSound() {
+        const { sound } = this.state;
+        if (sound) {
+            await sound.unloadAsync();
+        }
+        const { currentGame } = this.props;
+        if (currentGame.son_url) {
+            const { sound } = await Audio.Sound.createAsync(
+                { uri: currentGame.son_url }
+            );
+            this.setState({ sound });
+            await sound.playAsync();
+        }
+    }
 
     render() {
         const question = this.props.currentGame.question;
@@ -66,7 +85,7 @@ class Pyramid extends Component {
                         <View style={styles.card}>
 
                             <MainTitle title={title} icone={icone} />
-                            {(illustration != '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
+                            {(illustration !== '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
                             <Text style={styles.description}>{textRegles}</Text>
                             <Text style={styles.description}>{question}</Text>
 
@@ -76,8 +95,15 @@ class Pyramid extends Component {
                                 <CircleLine count={3} edit={true} preFill={false} />
                                 <CircleLine count={2} edit={true} preFill={false} />
                                 <CircleLine count={1} edit={true} onChangeText={this.handleInputTextChange} value={this.state.lastCircleValue} preFill={false} />
+                            
+			    </View>
 
-                            </View>
+                            {this.props.currentGame.son_url && (
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
+                                </TouchableOpacity>
+                            )}
+
                         </View>
                         <View style={styles.rightAlign}>
                             <TouchableOpacity style={styles.bouton}
@@ -94,12 +120,14 @@ class Pyramid extends Component {
                                     if (Math.trunc(newResult) == 0) {
                                         newResult = newResult * 10;
                                     }
-                                    if (parseInt(this.state.lastCircleValue) == newResult) {
+                                    if (parseInt(this.state.lastCircleValue) === newResult) {
                                         win = 1;
                                     }
+
+                                    // Navigate to the outcome page
                                     this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
                                 }}>
-                                <Text style={styles.boutonText}> {"Valider"} </Text>
+                                <Text style={styles.boutonText}>Valider</Text>
                             </TouchableOpacity>
                         </View>
                     </ScrollView>
@@ -107,7 +135,6 @@ class Pyramid extends Component {
             </SafeAreaView>
         );
     }
-
 }
 
 export default function (props) {

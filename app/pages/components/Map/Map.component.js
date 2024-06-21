@@ -1,9 +1,10 @@
 import React, { useEffect, useState, memo } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as Location from 'expo-location';
 import styles from './Map.component.style';
 import { getParcoursDonne } from './../../../utils/queries'; // Ensure the path is correct
+import styles from './Map.component.style'; // Import styles
 
 const MapComponent = memo(() => {
   const [location, setLocation] = useState(null); // State to store user location
@@ -62,6 +63,15 @@ const MapComponent = memo(() => {
       <style>
         #map { height: 100vh; width: 100%; margin: 0; padding: 0; }
         body { margin: 0; padding: 0; }
+        .leaflet-popup-content-wrapper {
+          font-size: 28px; /* Increase font size */
+        }
+        .leaflet-popup-content {
+          font-size: 28px; /* Increase font size */
+        }
+        .custom-green-marker {
+          filter: hue-rotate(90deg) !important; /* Apply hue-rotate filter for green color */
+        }
       </style>
     </head>
     <body>
@@ -76,16 +86,74 @@ const MapComponent = memo(() => {
           maxZoom: 19,
         }).addTo(map);
 
-        // Add marker for current location
-        L.marker([${location.coords.latitude}, ${location.coords.longitude}]).addTo(map)
-          .bindPopup('Votre position')
+        // Default blue marker for current location
+        const blueMarker = L.icon({
+          iconUrl: 'https://cdn1.iconfinder.com/data/icons/navigation-197/64/position_marker_current_navigation_user-256.png',
+          iconSize: [100, 100],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        });
+        L.marker([${location.coords.latitude}, ${location.coords.longitude}], { icon: blueMarker }).addTo(map)
+          .bindPopup('Vous êtes ici !')
           .openPopup();
 
-        // Add markers for circuits
-        const circuits = ${JSON.stringify(parcours)};
-        circuits.forEach(circuit => {
-          L.marker([circuit.latitude, circuit.longitude]).addTo(map)
-            .bindPopup(circuit.titre + '<br>' + circuit.difficulte + '<br>' + circuit.duree);
+        // Add markers for hiking spots
+        const hikingSpots = ${JSON.stringify(hikingSpots)};
+        hikingSpots.forEach(spot => {
+          let markerIcon;
+
+          if (spot.difficulte === 'Très facile') {
+            markerIcon = L.icon({
+              iconUrl: 'https://cdn-icons-png.freepik.com/256/183/183390.png?ga=GA1.1.1350229908.1718375323&semt=ais_hybrid',
+              iconSize: [70, 70],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41]
+            });
+          } else if (spot.difficulte === 'Facile') {
+            markerIcon = L.icon({
+              iconUrl: 'https://cdn-icons-png.freepik.com/256/9132/9132016.png?semt=ais_hybrid',
+              iconSize: [70, 70],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41]
+            });
+          } else if (spot.difficulte === 'Moyen') {
+            markerIcon = L.icon({
+              iconUrl:'https://cdn-icons-png.freepik.com/256/170/170384.png?semt=ais_hybrid',
+              iconSize: [70, 70],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41]
+            });
+          } else if (spot.difficulte === 'Difficile') {
+            markerIcon = L.icon({
+              iconUrl:'https://cdn-icons-png.freepik.com/256/252/252025.png?semt=ais_hybrid',
+              iconSize: [70, 70],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41]
+            });
+          } else if (spot.difficulte === 'Très difficile') {
+            markerIcon = L.icon({
+              iconUrl: 'https://cdn-icons-png.freepik.com/256/285/285807.png?ga=GA1.1.1350229908.1718375323&semt=ais_hybrid',
+              iconSize: [70, 70],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41]
+            });
+          } else {
+            markerIcon = L.icon({
+              iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41]
+            });
+          }
+          L.marker([spot.latitude, spot.longitude], { icon: markerIcon }).addTo(map)
+            .bindPopup(spot.titre + '<br>' + spot.difficulte + '<br>' + spot.duree);
         });
       </script>
     </body>

@@ -1,19 +1,21 @@
-import React, { Component, useEffect } from 'react';
-import { View, Text, Image, BackHandler, ScrollView } from 'react-native';
+import React, { Component } from 'react';
+import { View, Text, Image, BackHandler, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Audio } from 'expo-av';
 import styles from './TransitionGPS.component.style';
 import TopBarre from '../../../components/TopBarre/TopBarre.component';
-import NextPage from './../../components/NextPage/NextPage.component'
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { useNavigation } from '@react-navigation/native';
+import NextPage from './../../components/NextPage/NextPage.component';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import { parseText } from '../../../utils/parseText';
-import { getParcoursContents } from "../../../utils/queries";
 
 class TransitionGPS extends Component {
     constructor(props) {
         super(props);
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+        this.state = {
+            sound: null
+        };
     }
 
     componentDidMount() {
@@ -22,10 +24,32 @@ class TransitionGPS extends Component {
 
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+        if (this.state.sound) {
+            this.state.sound.unloadAsync();
+        }
     }
 
     handleBackButtonClick() {
         return true;
+    }
+
+    async playSound() {
+        const { sound } = this.state;
+        if (sound) {
+            await sound.unloadAsync();
+        }
+        const { currentGame } = this.props;
+        if (currentGame.son_url) {
+            try {
+                const { sound: newSound } = await Audio.Sound.createAsync(
+                    { uri: currentGame.son_url }
+                );
+                this.setState({ sound: newSound });
+                await newSound.playAsync();
+            } catch (error) {
+                console.error('Error loading sound:', error);
+            }
+        }
     }
 
     render() {
@@ -48,7 +72,12 @@ class TransitionGPS extends Component {
                         <View style={styles.card}>
                             <MainTitle title={title} icone={icone} />
                             <Text style={styles.description}>{paragraph}</Text>
-                            {(illustration != '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
+                            {(illustration !== '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
+                            {currentGame.son_url && (
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                         <NextPage
                             pageName="GamePage"
@@ -63,7 +92,5 @@ class TransitionGPS extends Component {
 
 export default function (props) {
     const navigation = useNavigation();
-    return <TransitionGPS {...props} navigation={navigation} />
+    return <TransitionGPS {...props} navigation={navigation} />;
 }
-
-//<Image source={{ uri: this.props.currentGame.image_url }} style={styles.areaImage} />
