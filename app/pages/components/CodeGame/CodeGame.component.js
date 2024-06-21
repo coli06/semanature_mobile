@@ -122,7 +122,7 @@ class CodeGame extends Component {
                      onPress={() => this.playSound()}
                    >
                      <Text style={styles.audioButtonText}>Play Sound</Text>
-                   </TouchableOpacity>
+                   </TouchableOpacity>)}
               </View>
             </ScrollView>
           </View>
