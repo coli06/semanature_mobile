@@ -70,12 +70,12 @@ $ eas build --platform android
 ```
 
 L'utilisateur obtient alors un lien pour télécharger le .aab qu'il faudra mettre en ligne sur le compte 
-Google PlayStore. Il est important que chaque version mise en ligne ai un numéro de build 
+Google PlayStore. Il est important que chaque version mise en ligne ait un numéro de build 
 différent:
-- Connexion a la google playstore console avec le compte devlpo : https://play.google.com/console/u/1/developers/7483810268087091411/app-list
+- Connexion à la console google playstore avec le compte devlpo : https://play.google.com/console/u/1/developers/7483810268087091411/app-list
 - Choisir l'application Scrute la Nature
 - Production -> Realease -> Modifier la version
 - Uploader le fichier .aab telecharger aver le lien a la fin du build expo.
-- Pousser la realease en prod, google va l'examinner(2 jours).
+- Pousser la realease en prod, google va l'examiner (2 jours).
 - Pousser la realease sur le playstore en confirmant.
 

@@ -1,13 +1,12 @@
 import React, { Component, useEffect, useState } from 'react';
-import { View, Image, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { getParcoursContents } from './../../../utils/queries';
-import loadParcoursLocally, { getParcoursFromCommuneLocally } from '../../../utils/loadParcoursLocally';
-import TopBarre from './../../../components/TopBarre/TopBarre.component'
+import databaseService from '../../../utils/localStorage';
+import TopBarre from '../../../components/TopBarre/TopBarre.component'
 import styles from './ParcoursBegin.component.style'
-import NextPage from './../NextPage/NextPage.component'
+import NextPage from '../NextPage/NextPage.component'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MainTitle from './../../../components/MainTitle/MainTitle.component';
+import MainTitle from '../../../components/MainTitle/MainTitle.component';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -59,15 +58,21 @@ export default function (props) {
     const [isInit, setIsInit] = useState(false);
     useEffect(() => {
         async function loadParcours() {
-            var parcours = await getParcoursContents(identifiant);
-            if (parcours == undefined) {
-                console.error("Circuit not found in storage");
-            } else {
-                console.log(parcours);
-                setIsInit(true);
-                setParcoursInfo(parcours.general);
-                setEtapesData(parcours.etapes);
-            }
+            databaseService.getParcours(
+                identifiant,
+                (parcours) => {
+                    if (parcours == undefined) {
+                        console.error("Circuit not found in storage");
+                    } else {
+                        setIsInit(true);
+                        setParcoursInfo(parcours.general);
+                        setEtapesData(parcours.etapes);
+                    }
+                },
+                (error) => {
+                    console.error("Error while loading local circuit content :", error.message);
+                }
+            );
         }
         loadParcours();
     }, [])

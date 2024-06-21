@@ -8,7 +8,6 @@ import NextPage from '../NextPage/NextPage.component';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import NormalizeStrings from './../../../utils/normalizeStrings';
-import {getParcoursContents} from "../../../utils/queries";
 
 /** 
  * Classe du component pour le jeu Code César
@@ -24,9 +23,6 @@ class CodeCesar extends Component {
     }
 
     componentDidMount() {
-        const { parcours } = this.props;
-        const size = parcours.length;
-        console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
     
@@ -66,7 +62,7 @@ class CodeCesar extends Component {
             <SafeAreaView style={styles.outsideSafeArea}>
                 <TopBarre name={topBarreName} />
                 <View style={styles.globalContainer}>
-                    <ScrollView contentContainerStyle={styles.scrollViewContainer} styel={styles.scrollView}>
+                    <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
 
                             <MainTitle title={title} icone={icone} />

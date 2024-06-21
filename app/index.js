@@ -21,8 +21,6 @@ const App = () => {
 			const keys = await AsyncStorage.getAllKeys();
 			console.log(keys);
 			const items = await AsyncStorage.multiGet(keys);
-			await AsyncStorage.clear();
-			
 			let totalSize = 0;
 			items.forEach(([key, value]) => {
 			  totalSize += key.length + value.length;

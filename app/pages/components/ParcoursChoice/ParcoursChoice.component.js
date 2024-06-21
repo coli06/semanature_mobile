@@ -3,7 +3,7 @@ import { View, FlatList, Text, ActivityIndicator } from 'react-native';
 import TopBarre from './../../../components/TopBarre/TopBarre.component';
 import { getParcoursFromCommune } from './../../../utils/queries'
 import ParcoursCard from './../../../components/ParcoursCard/ParcoursCard.component';
-import { getParcoursFromCommuneLocally } from '../../../utils/loadParcoursLocally';
+import databaseService from '../../../utils/localStorage';
 import theme from './../../../styles/theme.style';
 import styles from './ParcoursChoice.component.style'
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -58,6 +58,7 @@ class ParcoursChoice extends Component {
                     <TopBarre name="Choix du parcours" />
                     <View style={styles.globalContainer}>
                         <FlatList
+                            contentContainerStyle={styles.parcoursCardList}
                             extraData={this.props.refresh}
                             data={allDataSource}
                             keyExtractor={(item, index) => index.toString()}
@@ -79,32 +80,22 @@ export default function (props) {
     const [allDataSource, setAllDataSource] = useState([]);
     const communepluscode = props.commune;
     const commune = communepluscode.endsWith(')') ? communepluscode.substring(0, communepluscode.length - 8) : communepluscode;
-    console.log("commune : " + commune);
     const [internetAvailable, setInternetAvailable] = useState(false);
     const [refresh, setRefresh] = useState(true);
     const [loading, setLoading] = useState(true);
 
     let lastInternetState = false;
-    NetInfo.fetch()
-        .then((state) => {
-            if (internetAvailable != state.isInternetReachable) {
-                setInternetAvailable(state.isInternetReachable);
-            }
-        })
-        .catch((error) => {
-            console.error("Error while looking for Internet connection", error);
-        })
-    NetInfo.addEventListener(state => {
-        if (internetAvailable != state.isInternetReachable) {
-            setInternetAvailable(state.isInternetReachable);
-        }
-    })
     
-    /*useEffect(() => {
+    useEffect(() => {
         // Function to check initial internet connectivity
         const checkInitialInternetState = async () => {
-            const netInfoState = await NetInfo.fetch();
-            setInternetAvailable(netInfoState.isInternetReachable);
+            NetInfo.fetch().then((state) => {
+                if (internetAvailable != state.isInternetReachable) {
+                    setInternetAvailable(state.isInternetReachable);
+                }
+            }).catch((error) => {
+                console.error("Error while looking for Internet connection", error);
+            });
         };
 
         checkInitialInternetState();
@@ -118,7 +109,7 @@ export default function (props) {
 
         // Cleanup subscription on component unmount
         return () => unsubscribe();
-    }, []);*/
+    }, []);
 
     async function renderResults() {
         if (internetAvailable == lastInternetState) {
@@ -132,24 +123,32 @@ export default function (props) {
         var temp;
         if (internetAvailable) {
             temp = await getParcoursFromCommune(commune);
-        }
-        if (temp == undefined || temp.length == 0) {
-            temp = await getParcoursFromCommuneLocally(commune);
-        }
-        temp.sort((item1, item2) => {
-            let str1 = JSON.stringify(item1);
-            let str2 = JSON.stringify(item2);
-            if (str1 < str2) {
-                return -1;
-            }
-            if (str1 > str2) {
-                return 1;
-            }
-            return 0;
-        })        
+            processResults(temp);
+        } else if (temp == undefined || temp.length == 0) {
+            databaseService.getParcoursFromCommuneLocally(
+                commune,
+                (results) => {
+                    processResults(results);
+                }
+            );
+        }        
 
-        setAllDataSource(temp);
-        setLoading(false);
+        function processResults(temp) {
+            temp.sort((item1, item2) => {
+                let str1 = JSON.stringify(item1);
+                let str2 = JSON.stringify(item2);
+                if (str1 < str2) {
+                    return -1;
+                }
+                if (str1 > str2) {
+                    return 1;
+                }
+                return 0;
+            })        
+    
+            setAllDataSource(temp);
+            setLoading(false);
+        };
     }
 
     useEffect(() => {
@@ -158,7 +157,7 @@ export default function (props) {
 
     useFocusEffect(
         React.useCallback(() => {
-            // Rechargez les données lorsque la page prend le focus
+            // Recharger les données lorsque la page prend le focus
             reRender = async () => {await renderResults()};
             reRender();
         }, [])

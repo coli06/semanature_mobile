@@ -6,16 +6,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import NextPage from './../../components/NextPage/NextPage.component'
 import { useNavigation } from '@react-navigation/native';
 import { parseText } from '../../../utils/parseText';
-import {db} from "../../../config/firebaseConfig";
-import { collection, getDocs, getDoc, doc, query, where } from "firebase/firestore";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-    getParcoursFromCommune,
-    getAllCommunes,
-    getParcoursContents,
-    getAllDataFromCollection, displayParcoursForCommune
-} from "../../../utils/queries";
-import loadParcoursLocally from "../../../utils/loadParcoursLocally";
 
 
 class TransitionInfo extends Component {
@@ -24,9 +14,6 @@ class TransitionInfo extends Component {
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
     componentDidMount() {
-        const { parcours } = this.props;
-        const size = parcours.length;
-        console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
     
@@ -48,7 +35,6 @@ class TransitionInfo extends Component {
         } else {
             var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
         }
-        console.log(etapeMax);
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
                 <TopBarre name={topBarreName} />

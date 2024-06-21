@@ -35,4 +35,7 @@ export default StyleSheet.create({
     scrollViewContainer: {
         ...common.scrollViewContainer,
     },
+    scrollView: {
+        ...common.scrollView,
+    },
 });

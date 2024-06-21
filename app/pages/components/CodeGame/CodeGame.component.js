@@ -17,9 +17,6 @@ class CodeGame extends Component {
     }
 
     componentDidMount() {
-        const { parcours } = this.props;
-        const size = parcours.length;
-        console.log(parcours[size-1].parcoursId)
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
     
@@ -63,7 +60,7 @@ class CodeGame extends Component {
         <SafeAreaView style={styles.outsideSafeArea}>
           <TopBarre name={topBarreName} />
           <View style={styles.globalContainer}>
-            <ScrollView contentContainerStyle={styles.scrollViewContainer} styel={styles.scrollView}>
+            <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
               <View style={styles.card}>
                 <MainTitle title={title} icone={icone} />
                 {(illustration != '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}

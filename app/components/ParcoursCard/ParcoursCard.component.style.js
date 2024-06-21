@@ -12,7 +12,8 @@ export default StyleSheet.create({
 	},
 
 	texte: {
-		color: theme.DARK_GRAY_COLOR
+		color: theme.DARK_GRAY_COLOR,
+		marginBottom: 10,
 	},
 
 	texte_imp: {
@@ -55,9 +56,21 @@ export default StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		textAlign: 'center',
+		alignSelf: 'center',
+	},
+
+	infoRowFlex: {
+		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		alignSelf: 'center',
+		marginBottom: 10, 
 	},
 
     activityIndicator: {
         ...common.activityIndicator,
+		alignSelf: 'center',
+		marginVertical: 20,
     }
 })

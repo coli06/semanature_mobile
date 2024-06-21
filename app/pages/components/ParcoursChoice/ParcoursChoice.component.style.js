@@ -31,7 +31,12 @@ export default StyleSheet.create({
     },
     
     activityIndicatorContainer: {
-        height: "100%",
-        alignItems: "center",
+        flex: 1,
+        justifyContent: "center",
+    },
+
+    parcoursCardList: {
+        marginTop: 10,
+        minWidth: '100%',
     }
 })
