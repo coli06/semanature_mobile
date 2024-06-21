@@ -38,10 +38,10 @@ class CompterImage extends Component {
     handleInputTextChange = (input) => this.setState({ value: input });
 
     async loadSound() {
-        const { son_url } = this.props.currentGame;
-        if (son_url && son_url !== '') {
+        const { audio_url } = this.props.currentGame;
+        if (audio_url && audio_url !== '') {
             const { sound } = await Audio.Sound.createAsync(
-                { uri: son_url },
+                { uri: audio_url },
                 { shouldPlay: false }
             );
             this.setState({ sound, isSoundLoaded: true });

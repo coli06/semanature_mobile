@@ -8,9 +8,8 @@ import theme from './../../../styles/theme.style';
 import styles from './ParcoursChoice.component.style'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NetInfo from "@react-native-community/netinfo";
-import { useFocusEffect } from "@react-navigation/native";
 
-/** Composant de sélection de parcours pour la ville sélectionnée
+/** Composant de recherche de la page de recherche de parcours
 */
 class ParcoursChoice extends Component {
     constructor(props) {
@@ -30,28 +29,25 @@ class ParcoursChoice extends Component {
                 <SafeAreaView style={styles.outsideSafeArea}>
                     <View style={styles.globalContainer}>
                         <TopBarre name="Choix du parcours" />
-                        <View style={styles.activityIndicatorContainer}>
-                            <ActivityIndicator size="large" color={styles.activityIndicator.color} />
-                        </View>
+                        <ActivityIndicator size="large" color={theme.COLOR_PRIMARY} />
                     </View>
                 </SafeAreaView>
             );
         }
-        //S'il n'y a rien de retourné pour la commune, on affiche un petit message d'erreur
+        //Si il n'y a rien de retourné pour la commune, on affiche un petit message d'erreur
         else if (allDataSource.length == 0) {
             return (
                 <SafeAreaView style={styles.outsideSafeArea}>
                     <View style={styles.globalContainer}>
                         <TopBarre name="Choix du parcours" />
-                        <Text style={{ paddingTop: 20, padding: 10, fontSize: theme.FONT_SIZE_LARGE }}>
-                            Désolé, aucun parcours n'est encore disponible pour cette commune.
+                        <Text style={{ paddingTop: 20, padding: 10, fontSize: theme.FONT_SIZE_LARGE }}>Désolé, aucun parcours n'est encore disponible pour cette commune.
                         </Text>
                     </View>
                 </SafeAreaView>
             );
 
         }
-        // S'il y a des parcours disponibles, on les affiche dans une liste défilante.
+        //S'il y a des parcours disponibles, on les affiches dans une liste défilante.
         else {
             return (
                 <SafeAreaView style={styles.outsideSafeArea}>
@@ -83,44 +79,19 @@ export default function (props) {
     const [internetAvailable, setInternetAvailable] = useState(false);
     const [refresh, setRefresh] = useState(true);
     const [loading, setLoading] = useState(true);
-
+    let tmp = NetInfo.fetch()
     let lastInternetState = false;
-    NetInfo.fetch()
-        .then((state) => {
-            if (internetAvailable != state.isInternetReachable) {
-                setInternetAvailable(state.isInternetReachable);
-            }
-        })
-        .catch((error) => {
-            console.error("Error while looking for Internet connection", error);
-        })
+    tmp.then((state) => {
+        if (internetAvailable != state.isInternetReachable) {
+            setInternetAvailable(state.isInternetReachable);
+        }
+    })
     NetInfo.addEventListener(state => {
         if (internetAvailable != state.isInternetReachable) {
             setInternetAvailable(state.isInternetReachable);
         }
     })
-    
-    /*useEffect(() => {
-        // Function to check initial internet connectivity
-        const checkInitialInternetState = async () => {
-            const netInfoState = await NetInfo.fetch();
-            setInternetAvailable(netInfoState.isInternetReachable);
-        };
-
-        checkInitialInternetState();
-
-        // Subscribe to internet connectivity changes
-        const unsubscribe = NetInfo.addEventListener(state => {
-            if (internetAvailable !== state.isInternetReachable) {
-                setInternetAvailable(state.isInternetReachable);
-            }
-        });
-
-        // Cleanup subscription on component unmount
-        return () => unsubscribe();
-    }, []);*/
-
-    async function renderResults() {
+    async function f() {
         if (internetAvailable == lastInternetState) {
             return;
         } else {
@@ -134,6 +105,7 @@ export default function (props) {
             temp = await getParcoursFromCommune(commune);
         }
         if (temp == undefined || temp.length == 0) {
+
             temp = await getParcoursFromCommuneLocally(commune);
         }
         temp.sort((item1, item2) => {
@@ -146,28 +118,18 @@ export default function (props) {
                 return 1;
             }
             return 0;
-        })        
+        })
+        
 
         setAllDataSource(temp);
         setLoading(false);
     }
-
     useEffect(() => {
-        renderResults(); // Permet d'appeller une fonction asynchrone
+        f(); // Permet d'appeller une fonction asynchrone
     }, [internetAvailable])
-
-    useFocusEffect(
-        React.useCallback(() => {
-            // Rechargez les données lorsque la page prend le focus
-            reRender = async () => {await renderResults()};
-            reRender();
-        }, [])
-    );
-
     function reload() {
-        renderResults();
+        f();
     }
-
     return <ParcoursChoice
         {...props} commune={commune}
         allDataSource={allDataSource}

@@ -46,9 +46,9 @@ class FindIntruder extends Component {
             await sound.unloadAsync(); // Unload any previously loaded sound
         }
         const { currentGame } = this.props;
-        if (currentGame.son_url) {
+        if (currentGame.audio_url) {
             const { sound } = await Audio.Sound.createAsync(
-                { uri: currentGame.son_url }
+                { uri: currentGame.audio_url }
             );
             this.setState({ sound });
             await sound.playAsync();
@@ -57,7 +57,7 @@ class FindIntruder extends Component {
 
     render() {
         const etapeMax = this.props.parcoursInfo.etape_max;
-        const hasAudio = this.currentGame.son_url && this.currentGame.son_url.trim() !== '';
+        const hasAudio = this.currentGame.audio_url && this.currentGame.audio_url.trim() !== '';
 
         if (etapeMax === undefined) {
             var topBarreName = "";

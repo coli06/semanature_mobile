@@ -38,9 +38,9 @@ class LeSaviezVous extends Component {
             await sound.unloadAsync();
         }
         const { currentGame } = this.props;
-        if (currentGame.son_url) {
+        if (currentGame.audio_url) {
             const { sound } = await Audio.Sound.createAsync(
-                { uri: currentGame.son_url }
+                { uri: currentGame.audio_url }
             );
             this.setState({ sound });
             await sound.playAsync();
@@ -55,7 +55,7 @@ class LeSaviezVous extends Component {
         const icone = require('./../../../assets/le_saviez_vous_icone.png');
         const paragraph = parseText(currentGame.texte);
         const illustration = currentGame.image_url;
-        const hasAudio = currentGame.son_url && currentGame.son_url.trim() !== '';
+        const hasAudio = currentGame.audio_url && currentGame.audio_url.trim() !== '';
 
         return (
             <SafeAreaView style={styles.outsideSafeArea}>

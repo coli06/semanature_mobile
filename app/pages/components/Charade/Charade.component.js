@@ -42,9 +42,9 @@ class Charade extends Component {
             await sound.unloadAsync(); // Unload any previously loaded sound
         }
         const { currentGame } = this.props;
-        if (currentGame.son_url) {
+        if (currentGame.audio_url) {
             const { sound } = await Audio.Sound.createAsync(
-                { uri: currentGame.son_url }
+                { uri: currentGame.audio_url }
             );
             this.setState({ sound });
             await sound.playAsync();
@@ -71,7 +71,7 @@ class Charade extends Component {
                                 editable={true}
                                 placeholder='RÉPONSE'
                             />
-                            {this.props.currentGame.son_url && this.props.currentGame.son_url.trim() !== '' && (
+                            {this.props.currentGame.audio_url && this.props.currentGame.audio_url.trim() !== '' && (
                                 <TouchableOpacity
                                     style={styles.audioButton}
                                     onPress={() => this.playSound()}

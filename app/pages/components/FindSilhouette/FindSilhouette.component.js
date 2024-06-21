@@ -35,14 +35,14 @@ class FindSilhouette extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.currentGame.son_url !== this.props.currentGame.son_url) {
+        if (prevProps.currentGame.audio_url !== this.props.currentGame.audio_url) {
             this.checkAudioAvailability();
         }
     }
 
     checkAudioAvailability() {
-        const { son_url } = this.props.currentGame;
-        const hasAudio = son_url && son_url.trim() !== '';
+        const { audio_url } = this.props.currentGame;
+        const hasAudio = audio_url && audio_url.trim() !== '';
         this.setState({ hasAudio });
     }
 
@@ -58,9 +58,9 @@ class FindSilhouette extends Component {
             await sound.unloadAsync(); // Unload any previously loaded sound
         }
         const { currentGame } = this.props;
-        if (currentGame.son_url) {
+        if (currentGame.audio_url) {
             const { sound } = await Audio.Sound.createAsync(
-                { uri: currentGame.son_url }
+                { uri: currentGame.audio_url }
             );
             this.setState({ sound });
             await sound.playAsync();

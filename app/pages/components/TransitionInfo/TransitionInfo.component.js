@@ -41,9 +41,9 @@ class TransitionInfo extends Component {
             await sound.unloadAsync();
         }
         const { currentGame } = this.props;
-        if (currentGame.son_url) {
+        if (currentGame.audio_url) {
             const { sound } = await Audio.Sound.createAsync(
-                { uri: currentGame.son_url }
+                { uri: currentGame.audio_url }
             );
             this.setState({ sound });
             await sound.playAsync();
@@ -66,7 +66,7 @@ class TransitionInfo extends Component {
                             <Text style={styles.title}>{title}</Text>
                             {illustration !== '' && <Image source={{ uri: illustration }} style={styles.areaImage} />}
                             <Text style={styles.description}>{paragraph}</Text>
-                            {this.props.currentGame.son_url && (
+                            {this.props.currentGame.audio_url && (
                                 <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
                                     <Text style={styles.audioButtonText}>🔊</Text>
                                 </TouchableOpacity>

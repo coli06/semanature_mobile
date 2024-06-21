@@ -42,10 +42,10 @@ class TransitionGPS extends Component {
             await sound.unloadAsync();
         }
         const { currentGame } = this.props;
-        if (currentGame.son_url) {
+        if (currentGame.audio_url) {
             try {
                 const { sound: newSound } = await Audio.Sound.createAsync(
-                    { uri: currentGame.son_url }
+                    { uri: currentGame.audio_url }
                 );
                 this.setState({ sound: newSound });
                 await newSound.playAsync();
@@ -73,7 +73,7 @@ class TransitionGPS extends Component {
                             <MainTitle title={title} icone={icone} />
                             <Text style={styles.description}>{paragraph}</Text>
                             {illustration !== '' && <Image source={{ uri: illustration }} style={styles.areaImage} />}
-                            {currentGame.son_url && (
+                            {currentGame.audio_url && (
                                 <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
                                     <Text style={styles.audioButtonText}>🔊</Text>
                                 </TouchableOpacity>
