@@ -87,7 +87,7 @@ class FindIntruder extends Component {
                                         disabled={this.state.confirmClicked}
                                         onPress={() => {
                                             this.handleConfirmClicked();
-                                            var win = this.currentGame.index_bonneReponse === 0 ? 1 : 0;
+                                            var win = this.currentGame.index_bonneReponse == 0 ? 1 : 0;
                                             this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win });
                                         }}>
                                         <Image source={{ uri: this.currentGame.images_tab[0] }} style={styles.image} />
@@ -97,7 +97,7 @@ class FindIntruder extends Component {
                                         disabled={this.state.confirmClicked}
                                         onPress={() => {
                                             this.handleConfirmClicked();
-                                            var win = this.currentGame.index_bonneReponse === 1 ? 1 : 0;
+                                            var win = this.currentGame.index_bonneReponse == 1 ? 1 : 0;
                                             this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win });
                                         }}>
                                         <Image source={{ uri: this.currentGame.images_tab[1] }} style={styles.image} />
@@ -109,7 +109,7 @@ class FindIntruder extends Component {
                                         disabled={this.state.confirmClicked}
                                         onPress={() => {
                                             this.handleConfirmClicked();
-                                            var win = this.currentGame.index_bonneReponse === 2 ? 1 : 0;
+                                            var win = this.currentGame.index_bonneReponse == 2 ? 1 : 0;
                                             this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win });
                                         }}>
                                         <Image source={{ uri: this.currentGame.images_tab[2] }} style={styles.image} />
@@ -119,7 +119,7 @@ class FindIntruder extends Component {
                                         disabled={this.state.confirmClicked}
                                         onPress={() => {
                                             this.handleConfirmClicked();
-                                            var win = this.currentGame.index_bonneReponse === 3 ? 1 : 0;
+                                            var win = this.currentGame.index_bonneReponse == 3 ? 1 : 0;
                                             this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win });
                                         }}>
                                         <Image source={{ uri: this.currentGame.images_tab[3] }} style={styles.image} />

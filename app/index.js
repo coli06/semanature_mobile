@@ -16,21 +16,7 @@ class LPOMobApp extends Component {
 
 const App = () => {
 	useEffect(() => {
-		autoSignIn();
-		const monitorStorageUsage = async () => {
-			const keys = await AsyncStorage.getAllKeys();
-			console.log(keys);
-			const items = await AsyncStorage.multiGet(keys);
-			let totalSize = 0;
-			items.forEach(([key, value]) => {
-			  totalSize += key.length + value.length;
-			});
-		  
-			console.log(`Total storage usage: ${totalSize} bytes`);
-		  };
-		  
-		  // Call this function to log storage usage
-		  monitorStorageUsage();		  
+		autoSignIn();	  
 	}, []);
 	return <LPOMobApp />;
 };

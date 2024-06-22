@@ -108,8 +108,8 @@ const ParcoursCard = (props) => {
                                         ToastAndroid.show("Parcours supprimé", ToastAndroid.SHORT);
                                         setLoading(false);
                                         props.setDataLoaded(false);
-                                        props.setScore(null);
-                                        props.setScoreMax(null);
+                                        setScore(null);
+                                        setScoreMax(null);
                                         props.reload();
                                     },
                                     (error) => {

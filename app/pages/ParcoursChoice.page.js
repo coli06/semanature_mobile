@@ -9,13 +9,11 @@ class ParcoursChoicePage extends Component {
     render() {
         return (
             <ParcoursChoice
+                mapRequestId={this.props.route.params.mapRequestId}
                 commune={this.props.route.params.commune}
             />
         );
     }
 }
 
-
-
 export default ParcoursChoicePage
-

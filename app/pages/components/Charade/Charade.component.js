@@ -52,8 +52,8 @@ class Charade extends Component {
     }
 
     render() {
-        const { title, image_url, charade } = this.props.currentGame;
-        const { etape_max, n_etape } = this.props.parcoursInfo;
+        const { nom, image_url, charade, n_etape } = this.props.currentGame;
+        const { etape_max } = this.props.parcoursInfo;
         const topBarreName = etape_max !== undefined ? `Étape : ${n_etape}/${etape_max}` : "";
 
         return (
@@ -62,7 +62,7 @@ class Charade extends Component {
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
-                            <MainTitle title={title} icone={require('./../../../assets/charade_icone.png')} />
+                            <MainTitle title={nom} icone={require('./../../../assets/charade_icone.png')} />
                             {image_url !== '' && <Image source={{ uri: image_url }} style={styles.areaImage} />}
                             <Text style={styles.description}>{charade}</Text>
                             <TextInput

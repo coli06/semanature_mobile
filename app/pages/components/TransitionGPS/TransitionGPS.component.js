@@ -39,7 +39,7 @@ class TransitionGPS extends Component {
             await sound.unloadAsync();
         }
         const { currentGame } = this.props;
-        if (currentGame.audio_url) {
+        if (currentGame && currentGame.audio_url) {
             try {
                 const { sound: newSound } = await Audio.Sound.createAsync(
                     { uri: currentGame.audio_url }
@@ -53,11 +53,12 @@ class TransitionGPS extends Component {
     }
 
     render() {
-        const title = this.props.currentGame.nom;
+        const { currentGame, parcoursInfo } = this.props;
+        const title = currentGame?.nom;
         const icone = require('./../../../assets/transition_gps_icone.png');
-        const paragraph = parseText(this.props.currentGame.texte);
-        const illustration = this.props.currentGame.image_url;
-        const etapeMax = this.props.parcoursInfo.etape_max;
+        const paragraph = parseText(currentGame?.texte);
+        const illustration = currentGame?.image_url;
+        const etapeMax = parcoursInfo?.etape_max;
         if (etapeMax === undefined) {
             var topBarreName = "";
         } else {
@@ -72,8 +73,8 @@ class TransitionGPS extends Component {
                         <View style={styles.card}>
                             <MainTitle title={title} icone={icone} />
                             <Text style={styles.description}>{paragraph}</Text>
-                            {(illustration !== '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
-                            {currentGame.audio_url && (
+                            {illustration && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
+                            {currentGame?.audio_url && (
                                 <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
                                     <Text style={styles.audioButtonText}>🔊</Text>
                                 </TouchableOpacity>

@@ -39,13 +39,9 @@ export default StyleSheet.create({
         ...common.outsideSafeArea,
     },
     audioButton: {
-        marginTop: 10,
-        padding: 10,
-        backgroundColor: '#ddd',
-        borderRadius: 5,
-        alignItems: 'center'
+        ...common.audioButton,
     },
     audioButtonText: {
-        fontSize: 20,
+        ...common.audioButtonText,
     }
 });

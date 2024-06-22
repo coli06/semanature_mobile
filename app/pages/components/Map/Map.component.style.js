@@ -63,6 +63,10 @@ export default StyleSheet.create({
 
     bouton: {
         ...common.bouton,
+        position: 'absolute',
+        bottom: 30,
+        left: 20,
+        right: 20,
     },
 
     boutonText: {
@@ -74,8 +78,7 @@ export default StyleSheet.create({
     },
 
     map: {
-        width: '100%',
-        height: '100%',
+        ...StyleSheet.absoluteFillObject,
     },
 
     container: {

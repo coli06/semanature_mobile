@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { Component, useEffect, useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { useEffect } from 'react';
 
 
 export default function (props) {

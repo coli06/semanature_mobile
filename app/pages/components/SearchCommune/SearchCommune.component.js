@@ -42,7 +42,7 @@ class SearchCommune extends Component {
                                 <View>
                                     <TouchableOpacity
                                         style={styles.touchableItem}
-                                        onPress={() => { this.props.navigation.navigate("ParcoursChoicePage", { commune: item }); }}
+                                        onPress={() => { this.props.navigation.navigate("ParcoursChoicePage", { commune: item, mapRequestId: "" }); }}
                                     >
                                         <Text style={styles.textAreaStyle}> {item} </Text>
                                     </TouchableOpacity>

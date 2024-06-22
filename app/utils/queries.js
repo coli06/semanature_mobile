@@ -43,7 +43,7 @@ export async function getAllCommunes() {
 // Return all circuits from the given city
 // Input : City name (string)
 // Output : Circuits { titre, description, commune } (object)
-export async function getParcoursFromCommune(cityName) {
+export async function getParcoursFromCommune(cityName, id = "") {
 
 	let blocked = false;
 	if (await checkQueryQuota(40, 50) == "block") {
@@ -51,30 +51,50 @@ export async function getParcoursFromCommune(cityName) {
 	}
 	const parcours = [];
 
-	// Get collection reference
-	const parcoursCollectionRef = collection(db, 'parcours');
+	let q;
+	if (id === "") {
+		// Get collection reference
+		const parcoursCollectionRef = collection(db, 'parcours');
 
-	// Create query (filter)
-	const q = query(parcoursCollectionRef, where("commune", "==", cityName), where("brouillon", "==", false));
+		// Create query (filter)
+		q = query(parcoursCollectionRef, where("commune", "==", cityName), where("brouillon", "==", false));
 
-	const querySnapshot = await getDocs(q);
-	await Promise.all(querySnapshot.docs.map(async (doc) => {
+		const querySnapshot = await getDocs(q);
+		await Promise.all(querySnapshot.docs.map(async (doc) => {
+			let image_url = ""
+			if (!blocked) {
+				image_url = (doc.data().image_url) == "" ? doc.data().image_url : await getDataURLFromURL(doc.data().image_url);
+			}
+			const temp = {
+				identifiant: doc.id,
+				titre: doc.data().titre,
+				description: doc.data().description,
+				commune: doc.data().commune,
+				duree: doc.data().duree,
+				difficulte: doc.data().difficulte,
+				image_url: image_url,
+				etape_max: doc.data().etape_max
+			}
+			parcours.push(temp);
+		}));
+	} else {
+		const snapShotDoc = await getDoc(doc(db, "parcours", id));
 		let image_url = ""
 		if (!blocked) {
-			image_url = (doc.data().image_url) == "" ? doc.data().image_url : await getDataURLFromURL(doc.data().image_url);
+			image_url = (snapShotDoc.data().image_url) == "" ? snapShotDoc.data().image_url : await getDataURLFromURL(snapShotDoc.data().image_url);
 		}
 		const temp = {
-			identifiant: doc.id,
-			titre: doc.data().titre,
-			description: doc.data().description,
-			commune: doc.data().commune,
-			duree: doc.data().duree,
-			difficulte: doc.data().difficulte,
+			identifiant: snapShotDoc.id,
+			titre: snapShotDoc.data().titre,
+			description: snapShotDoc.data().description,
+			commune: snapShotDoc.data().commune,
+			duree: snapShotDoc.data().duree,
+			difficulte: snapShotDoc.data().difficulte,
 			image_url: image_url,
-			etape_max: doc.data().etape_max
+			etape_max: snapShotDoc.data().etape_max
 		}
 		parcours.push(temp);
-	}));
+	}
 	return parcours;
 }
 
@@ -228,6 +248,8 @@ export async function getParcoursDonne() {
 	  if (data.gps) { // Check if gps exists
 		const { latitude, longitude } = data.gps;
 		parcoursDonne.push({
+		  identifiant: doc.id,
+		  commune: data.commune,
 		  latitude: latitude,
 		  longitude: longitude,
 		  titre: data.titre,

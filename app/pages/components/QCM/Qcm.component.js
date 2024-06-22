@@ -74,7 +74,7 @@ class Qcm extends Component {
         } else {
             var topBarreName = "Étape : " + this.props.currentGame.n_etape + "/" + etapeMax;
         }
-        const title = this.currentGame.nom
+        const title = this.props.currentGame.nom
         const icone = require('./../../../assets/qcm_icone.png');
         const illustration = this.props.currentGame.image_url;
         return (
@@ -84,7 +84,7 @@ class Qcm extends Component {
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
                             <MainTitle title={title} icone={icone} />
-                            {illustration !== '' && <Image source={{ uri: illustration }} style={styles.areaImage} />}
+                            {illustration != '' && <Image source={{ uri: illustration }} style={styles.areaImage} />}
                             <Text style={styles.description}>{this.props.currentGame.question}</Text>
                             {this.props.currentGame.audio_url && (
                                 <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
@@ -93,24 +93,58 @@ class Qcm extends Component {
                             )}
                             <View style={styles.gameZone}>
                                 <View style={styles.rowFlex}>
-                                    {this.props.currentGame.reponses_tab.map((reponse, index) => (
-                                        <TouchableOpacity
-                                            key={index}
-                                            style={styles.bouton}
-                                            disabled={this.state.confirmClicked}
-                                            onPress={() => {
-                                                this.handleConfirmClicked();
-                                                const win = index === this.props.currentGame.index_bonneReponse ? 1 : 0;
-                                                this.props.navigation.navigate("GameOutcomePage", {
-                                                    parcoursInfo: this.props.parcoursInfo,
-                                                    parcours: this.props.parcours,
-                                                    currentGame: this.props.currentGame,
-                                                    win: win
-                                                });
-                                            }}>
-                                            <Text adjustsFontSizeToFit={true} style={styles.boutonText}>{reponse}</Text>
-                                        </TouchableOpacity>
-                                    ))}
+                                    <TouchableOpacity style={styles.bouton}
+                                        disabled={this.state.confirmClicked}
+                                        onPress={() => {
+                                            this.handleConfirmClicked();
+                                            var win = 0;
+                                            if (this.props.currentGame.index_bonneReponse == 0) {
+                                                win = 1;
+                                            }
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                        }}>
+                                        <Text adjustsFontSizeToFit={true} style={styles.boutonText}> {this.props.currentGame.reponses_tab[0]} </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.bouton}
+                                        disabled={this.state.confirmClicked}
+                                        onPress={() => {
+                                            this.handleConfirmClicked();
+                                            var win = 0;
+                                            if (this.props.currentGame.index_bonneReponse == 1) {
+                                                win = 1;
+                                            }
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                        }}>
+                                        <Text adjustsFontSizeToFit={true} style={styles.boutonText}> {this.props.currentGame.reponses_tab[1]} </Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.rowFlex}>
+                                    <TouchableOpacity style={styles.bouton}
+                                        disabled={this.state.confirmClicked}
+                                        onPress={() => {
+                                            this.handleConfirmClicked();
+                                            var win = 0;
+                                            if (this.props.currentGame.index_bonneReponse == 2) {
+                                                win = 1;
+                                            }
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                        }}>
+                                        <Text adjustsFontSizeToFit={true} style={styles.boutonText}> {this.props.currentGame.reponses_tab[2]} </Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity style={styles.bouton}
+                                        disabled={this.state.confirmClicked}
+                                        onPress={() => {
+                                            this.handleConfirmClicked();
+                                            var win = 0;
+                                            if (this.props.currentGame.index_bonneReponse == 3) {
+                                                win = 1;
+                                            }
+                                            this.props.navigation.navigate("GameOutcomePage", { parcoursInfo: this.props.parcoursInfo, parcours: this.props.parcours, currentGame: this.props.currentGame, win: win });
+                                        }}>
+                                        <Text adjustsFontSizeToFit={true} style={styles.boutonText}> {this.props.currentGame.reponses_tab[3]} </Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </View>

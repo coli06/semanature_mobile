@@ -56,7 +56,7 @@ export default StyleSheet.create({
 		fontWeight: theme.FONT_WEIGHT_LIGHT,
 		padding: 5,
 		margin: 5,
-		textAlign: 'justify',
+		textAlign: 'left',
 	},
 
 	card: {
@@ -151,6 +151,18 @@ export default StyleSheet.create({
 
 	parcoursCardList: {
         minWidth: '100%',
-	}
+	},
+
+	audioButton: {
+        marginTop: 10,
+        padding: 10,
+        backgroundColor: '#ddd',
+        borderRadius: 20,
+        alignItems: 'center',
+	},
+	
+    audioButtonText: {
+        fontSize: 20,
+    }
 
 });

@@ -35,17 +35,13 @@ export default StyleSheet.create({
     scrollViewContainer: {
         ...common.scrollViewContainer,
     },
-    audioButton: {
-        marginTop: 10,
-        padding: 10,
-        backgroundColor: '#ddd',
-        borderRadius: 5,
-        alignItems: 'center'
-    },
     scrollView: {
         ...common.scrollView,
     },
+    audioButton: {
+        ...common.audioButton,
+    },
     audioButtonText: {
-        fontSize: 20,
+        ...common.audioButtonText,
     }
 });
