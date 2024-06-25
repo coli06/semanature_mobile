@@ -26,7 +26,6 @@ import PrincipesPage from '../pages/Principes.page.js';
 import { Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import theme from './../styles/theme.style';
-import common from '../styles/common.style.js';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PyramidPage from './../pages/Pyramid.page';
 import FindIntruderPage from '../pages/FindIntruder.page';

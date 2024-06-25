@@ -8,25 +8,61 @@ import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import NormalizeStrings from './../../../utils/normalizeStrings';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NextPage from '../NextPage/NextPage.component';
+import * as FileSystem from 'expo-file-system';
 
 class Charade extends Component {
     constructor(props) {
         super(props);
         this.state = {
             proposition: "",
-            sound: null, // State to hold the loaded sound
+            audio: null // State to hold the loaded sound
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        this.loadAudio();
     }
-
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
-        if (this.state.sound) {
-            this.state.sound.unloadAsync(); // Unload the sound when component unmounts
+        const { audio } = this.state;
+        if (audio) {
+            audio.unloadAsync();
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            FileSystem.deleteAsync(fileUri).catch(error => console.warn('Error deleting temporary audio file :', error.message));
+        }
+    }
+
+    async loadAudio() {
+        const audioURL = this.props.currentGame.audio_url;
+        if (audioURL && audioURL !== '') {
+            const { audio } = this.state;
+            if (audio) {
+                await audio.unloadAsync();
+            }
+
+            // Write the base64 string to a temporary file
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            await FileSystem.writeAsStringAsync(fileUri, audioURL, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+           // Load the audio
+            const newAudio = await Audio.Sound.createAsync(
+                { uri: fileUri },
+                { shouldPlay: false }
+            );
+            this.setState({ audio: newAudio.sound });
+        }
+    }
+
+    async playSound() {
+        const { audio } = this.state;
+        if (audio) {
+            console.log("playing audio");
+            await audio.playAsync();
         }
     }
 
@@ -36,23 +72,8 @@ class Charade extends Component {
 
     handleInputTextChange = (input) => this.setState({ proposition: input }) // User's input
 
-    async playSound() {
-        const { sound } = this.state;
-        if (sound) {
-            await sound.unloadAsync(); // Unload any previously loaded sound
-        }
-        const { currentGame } = this.props;
-        if (currentGame.audio_url) {
-            const { sound } = await Audio.Sound.createAsync(
-                { uri: currentGame.audio_url }
-            );
-            this.setState({ sound });
-            await sound.playAsync();
-        }
-    }
-
     render() {
-        const { nom, image_url, charade, n_etape } = this.props.currentGame;
+        const { nom, image_url, charade, n_etape, audio_url } = this.props.currentGame;
         const { etape_max } = this.props.parcoursInfo;
         const topBarreName = etape_max !== undefined ? `Étape : ${n_etape}/${etape_max}` : "";
 
@@ -65,17 +86,17 @@ class Charade extends Component {
                             <MainTitle title={nom} icone={require('./../../../assets/charade_icone.png')} />
                             {image_url !== '' && <Image source={{ uri: image_url }} style={styles.areaImage} />}
                             <Text style={styles.description}>{charade}</Text>
+                            {audio_url && (
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
+                                </TouchableOpacity>
+                            )}
                             <TextInput
                                 style={styles.inputTextField}
                                 onChangeText={this.handleInputTextChange}
                                 editable={true}
                                 placeholder='RÉPONSE'
                             />
-                            {this.props.currentGame.audio_url && this.props.currentGame.audio_url.trim() !== '' && (
-                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
-                                    <Text style={styles.audioButtonText}>🔊</Text>
-                                </TouchableOpacity>
-                            )}
                         </View>
                         <View style={styles.rightAlign}>
                             <NextPage

@@ -8,48 +8,65 @@ import TopBarre from '../../../components/TopBarre/TopBarre.component';
 import NextPage from './../../components/NextPage/NextPage.component';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import { parseText } from '../../../utils/parseText';
+import * as FileSystem from 'expo-file-system';
 
 class TransitionGPS extends Component {
     constructor(props) {
         super(props);
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state = {
-            sound: null
+            audio: null
         };
     }
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        this.loadAudio();
     }
-
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
-        if (this.state.sound) {
-            this.state.sound.unloadAsync();
+        const { audio } = this.state;
+        if (audio) {
+            audio.unloadAsync();
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            FileSystem.deleteAsync(fileUri).catch(error => console.warn('Error deleting temporary audio file :', error.message));
+        }
+    }
+
+    async loadAudio() {
+        const audioURL = this.props.currentGame.audio_url;
+        if (audioURL && audioURL !== '') {
+            const { audio } = this.state;
+            if (audio) {
+                await audio.unloadAsync();
+            }
+
+            // Write the base64 string to a temporary file
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            await FileSystem.writeAsStringAsync(fileUri, audioURL, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+           // Load the audio
+            const newAudio = await Audio.Sound.createAsync(
+                { uri: fileUri },
+                { shouldPlay: false }
+            );
+            this.setState({ audio: newAudio.sound });
+        }
+    }
+
+    async playSound() {
+        const { audio } = this.state;
+        if (audio) {
+            console.log("playing audio");
+            await audio.playAsync();
         }
     }
 
     handleBackButtonClick() {
         return true;
-    }
-
-    async playSound() {
-        const { sound } = this.state;
-        if (sound) {
-            await sound.unloadAsync();
-        }
-        const { currentGame } = this.props;
-        if (currentGame && currentGame.audio_url) {
-            try {
-                const { sound: newSound } = await Audio.Sound.createAsync(
-                    { uri: currentGame.audio_url }
-                );
-                this.setState({ sound: newSound });
-                await newSound.playAsync();
-            } catch (error) {
-                console.error('Error loading sound:', error);
-            }
-        }
     }
 
     render() {
@@ -73,12 +90,12 @@ class TransitionGPS extends Component {
                         <View style={styles.card}>
                             <MainTitle title={title} icone={icone} />
                             <Text style={styles.description}>{paragraph}</Text>
-                            {illustration && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
-                            {currentGame?.audio_url && (
+                            {currentGame.audio_url && (
                                 <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
                                     <Text style={styles.audioButtonText}>🔊</Text>
                                 </TouchableOpacity>
                             )}
+                            {illustration && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
                         </View>
                         <NextPage
                             pageName="GamePage"

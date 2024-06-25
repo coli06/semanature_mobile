@@ -7,29 +7,65 @@ import TopBarre from '../../../components/TopBarre/TopBarre.component';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import NormalizeStrings from './../../../utils/normalizeStrings';
+import * as FileSystem from 'expo-file-system';
 
 class CodeGame extends Component {
     constructor(props) {
-        super(props);
-        // par défaut on utilise blockConfirm pour empêcher de passer à la page suivante
-        this.state = {
-            code: this.props.currentGame.code,
-            blockConfirm: true,
-            input: '',
-            isSoundLoaded: false,
-            sound: null,
-        };
-        this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+      super(props);
+      // par défaut on utilise blockConfirm pour empêcher de passer à la page suivante
+      this.state = {
+          code: this.props.currentGame.code,
+          blockConfirm: true,
+          input: '',
+          audio: null
+      };
+      this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
     componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.loadSound();
+      BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+      this.loadAudio();
     }
     
     componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.unloadSound();
+      BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+      const { audio } = this.state;
+      if (audio) {
+          audio.unloadAsync();
+          const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+          FileSystem.deleteAsync(fileUri).catch(error => console.warn('Error deleting temporary audio file :', error.message));
+      }
+    }
+
+    async loadAudio() {
+      const audioURL = this.props.currentGame.audio_url;
+      if (audioURL && audioURL !== '') {
+          const { audio } = this.state;
+          if (audio) {
+              await audio.unloadAsync();
+          }
+
+          // Write the base64 string to a temporary file
+          const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+          await FileSystem.writeAsStringAsync(fileUri, audioURL, {
+              encoding: FileSystem.EncodingType.Base64,
+          });
+
+        // Load the audio
+          const newAudio = await Audio.Sound.createAsync(
+              { uri: fileUri },
+              { shouldPlay: false }
+          );
+          this.setState({ audio: newAudio.sound });
+      }
+    }
+
+    async playSound() {
+      const { audio } = this.state;
+      if (audio) {
+          console.log("playing audio");
+          await audio.playAsync();
+      }
     }
 
     /**
@@ -44,38 +80,13 @@ class CodeGame extends Component {
      * Permet d'éviter le spam click
      */
     handleConfirmClicked = () => {
-        if (!this.state.confirmClicked) {
-            this.setState({ confirmClicked: true });
-        }
+      if (!this.state.confirmClicked) {
+          this.setState({ confirmClicked: true });
+      }
     }
 
     handleChange = (input) => {
-        this.setState({ input: input });
-    }
-
-    async loadSound() {
-        const { audio_url } = this.props.currentGame;
-        if (audio_url && audio_url !== '') {
-            const { sound } = await Audio.Sound.createAsync(
-                { uri: audio_url },
-                { shouldPlay: false }
-            );
-            this.setState({ sound, isSoundLoaded: true });
-        }
-    }
-
-    async unloadSound() {
-        if (this.state.sound) {
-            await this.state.sound.unloadAsync();
-        }
-    }
-
-    async playSound() {
-        try {
-            await this.state.sound.playAsync();
-        } catch (error) {
-            console.error('Failed to play sound', error);
-        }
+      this.setState({ input: input });
     }
 
     render() {
@@ -98,11 +109,15 @@ class CodeGame extends Component {
                 <MainTitle title={title} icone={icone} />
                 {(illustration != '') && (<Image source={{ uri: illustration }} style={styles.areaImage} />)}
                 <Text style={styles.description}>{paragraph}</Text>
+                {this.props.currentGame.audio_url && (
+                   <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                     <Text style={styles.audioButtonText}>🔊</Text>
+                   </TouchableOpacity>)}
                 <TextInput style={styles.inputTextField} onChangeText={this.handleChange} editable={true} placeholder="CODE" />
               </View>
               <View style={styles.rightAlign}>
                 <TouchableOpacity
-		  style={styles.bouton}
+		              style={styles.bouton}
                   disabled={this.state.confirmClicked}
                   onPress={() => {
                     if (NormalizeStrings(this.state.code) == NormalizeStrings(this.state.input)) {
@@ -115,13 +130,6 @@ class CodeGame extends Component {
                   }}>
                   <Text style={styles.boutonText}> {"Valider"} </Text>
                 </TouchableOpacity>
-                {this.state.isSoundLoaded && (
-                   <TouchableOpacity
-                     style={styles.audioButton}
-                     onPress={() => this.playSound()}
-                   >
-                     <Text style={styles.audioButtonText}>Play Sound</Text>
-                   </TouchableOpacity>)}
               </View>
             </ScrollView>
           </View>

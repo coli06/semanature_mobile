@@ -8,6 +8,7 @@ import CircleLine from './CircleLine'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import { Audio } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
 
 
 /**
@@ -18,7 +19,7 @@ class Pyramid extends Component {
         super(props);
         this.state = {
             lastCircleValue: '',
-            sound: null,
+            audio: null,
             confirmClicked: false,
             s: generateValues(this.props.currentGame.nombre) // initialise les valeurs des premiers cercles avec la fonction generateValues
         };
@@ -27,12 +28,47 @@ class Pyramid extends Component {
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        this.loadAudio();
     }
     
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
-        if (this.state.sound) {
-            this.state.sound.unloadAsync();
+        const { audio } = this.state;
+        if (audio) {
+            audio.unloadAsync();
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            FileSystem.deleteAsync(fileUri).catch(error => console.warn('Error deleting temporary audio file :', error.message));
+        }
+    }
+
+    async loadAudio() {
+        const audioURL = this.props.currentGame.audio_url;
+        if (audioURL && audioURL !== '') {
+            const { audio } = this.state;
+            if (audio) {
+                await audio.unloadAsync();
+            }
+
+            // Write the base64 string to a temporary file
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            await FileSystem.writeAsStringAsync(fileUri, audioURL, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+           // Load the audio
+            const newAudio = await Audio.Sound.createAsync(
+                { uri: fileUri },
+                { shouldPlay: false }
+            );
+            this.setState({ audio: newAudio.sound });
+        }
+    }
+
+    async playSound() {
+        const { audio } = this.state;
+        if (audio) {
+            console.log("playing audio");
+            await audio.playAsync();
         }
     }
     
@@ -47,21 +83,6 @@ class Pyramid extends Component {
     }
 
     handleInputTextChange = (input) => this.setState({ lastCircleValue: input })
-
-    async playSound() {
-        const { sound } = this.state;
-        if (sound) {
-            await sound.unloadAsync();
-        }
-        const { currentGame } = this.props;
-        if (currentGame.audio_url) {
-            const { sound } = await Audio.Sound.createAsync(
-                { uri: currentGame.audio_url }
-            );
-            this.setState({ sound });
-            await sound.playAsync();
-        }
-    }
 
     render() {
         const question = this.props.currentGame.question;
@@ -89,6 +110,12 @@ class Pyramid extends Component {
                             <Text style={styles.description}>{textRegles}</Text>
                             <Text style={styles.description}>{question}</Text>
 
+                            {this.props.currentGame.audio_url && (
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
+                                </TouchableOpacity>
+                            )}
+
                             <View style={styles.gameArea}>
 
                                 <CircleLine count={4} edit={false} preFill={true} s={this.state.s} />
@@ -96,14 +123,7 @@ class Pyramid extends Component {
                                 <CircleLine count={2} edit={true} preFill={false} />
                                 <CircleLine count={1} edit={true} onChangeText={this.handleInputTextChange} value={this.state.lastCircleValue} preFill={false} />
                             
-			    </View>
-
-                            {this.props.currentGame.audio_url && (
-                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
-                                    <Text style={styles.audioButtonText}>🔊</Text>
-                                </TouchableOpacity>
-                            )}
-
+			                </View>
                         </View>
                         <View style={styles.rightAlign}>
                             <TouchableOpacity style={styles.bouton}

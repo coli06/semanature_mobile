@@ -1,5 +1,5 @@
 const obfuscatingTransformer = require("react-native-obfuscating-transformer");
-
+console.log("transformmm");
 module.exports = obfuscatingTransformer({
   // offusque TOUT les fichiers
 	filter: (filename, source) => true,

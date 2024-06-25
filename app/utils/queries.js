@@ -144,6 +144,9 @@ export async function getParcoursContents(id) {
 				if (etapeInfo.etape.image_url && etapeInfo.etape.image_url != "") {
 					etapeInfo.etape.image_url = await getDataURLFromURL(etapeInfo.etape.image_url);
 				}
+				if (etapeInfo.etape.audio_url && etapeInfo.etape.audio_url != "") {
+					etapeInfo.etape.audio_url = await getAudioDataURLFromURL(etapeInfo.etape.audio_url);
+				}
 				if (etapeInfo.etape.images_tab) {
 					for (var i = 0; i < etapeInfo.etape.images_tab.length; i++) {
 						etapeInfo.etape.images_tab[i] = await getDataURLFromURL(etapeInfo.etape.images_tab[i]);
@@ -166,6 +169,30 @@ export async function getParcoursContents(id) {
 		console.error("Error getting parcours contents: ", error);
 		return { error: "An error occurred while fetching parcours contents." };
 	}
+}
+
+async function getAudioDataURLFromURL(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch resource: ${response.status} ${response.statusText}`);
+        }
+
+        const blob = await response.blob();
+        return await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+				const dataUrl = reader.result;
+                const base64Data = dataUrl.split(',')[1]; // Remove prefix to keep the data only
+				resolve(base64Data);
+			}
+            reader.onerror = () => reject(new Error("Failed to read Blob as Data URL"));
+            reader.readAsDataURL(blob);
+        });
+    } catch (error) {
+        console.error("Error in getDataURLFromURL:", error);
+        throw error;
+    }
 }
 
 async function getDataURLFromURL(url) {

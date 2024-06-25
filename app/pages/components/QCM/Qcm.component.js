@@ -6,6 +6,7 @@ import styles from './Qcm.component.style.js';
 import TopBarre from './../../../components/TopBarre/TopBarre.component';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
+import * as FileSystem from 'expo-file-system';
 
 class Qcm extends Component {
     constructor(props) {
@@ -13,19 +14,53 @@ class Qcm extends Component {
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state = {
             confirmClicked: false,
-            sound: null, // State variable to hold the sound object
+            audio: null, // State variable to hold the sound object
         };
     }
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        this.loadAudio();
     }
     
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
-        // Unload the sound when component is unmounted
-        if (this.state.sound) {
-            this.state.sound.unloadAsync();
+        const { audio } = this.state;
+        if (audio) {
+            audio.unloadAsync();
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            FileSystem.deleteAsync(fileUri).catch(error => console.warn('Error deleting temporary audio file :', error.message));
+        }
+    }
+
+    async loadAudio() {
+        const audioURL = this.props.currentGame.audio_url;
+        if (audioURL && audioURL !== '') {
+            const { audio } = this.state;
+            if (audio) {
+                await audio.unloadAsync();
+            }
+
+            // Write the base64 string to a temporary file
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            await FileSystem.writeAsStringAsync(fileUri, audioURL, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+           // Load the audio
+            const newAudio = await Audio.Sound.createAsync(
+                { uri: fileUri },
+                { shouldPlay: false }
+            );
+            this.setState({ audio: newAudio.sound });
+        }
+    }
+
+    async playSound() {
+        const { audio } = this.state;
+        if (audio) {
+            console.log("playing audio");
+            await audio.playAsync();
         }
     }
     
@@ -39,9 +74,9 @@ class Qcm extends Component {
             await sound.unloadAsync();
         }
         const { currentGame } = this.props;
-        if (currentGame.audio_url) {
+        if (currentGame.audio) {
             const { sound } = await Audio.Sound.createAsync(
-                { uri: currentGame.audio_url }
+                { uri: currentGame.audio }
             );
             this.setState({ sound });
             await sound.playAsync();
@@ -51,19 +86,6 @@ class Qcm extends Component {
     handleConfirmClicked = async () => {
         if (!this.state.confirmClicked) {
             this.setState({ confirmClicked: true });
-        }
-
-        // Check if audio_url exists and is not blank
-        const audio_url = this.props.currentGame.audio_url;
-        if (audio_url && audio_url !== '') {
-            try {
-                const { sound: newSound } = await Audio.Sound.createAsync(
-                    { uri: audio_url }
-                );
-                this.setState({ sound: newSound }, () => newSound.playAsync());
-            } catch (error) {
-                console.error('Error loading sound:', error);
-            }
         }
     }
 

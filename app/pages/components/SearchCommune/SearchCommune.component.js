@@ -1,5 +1,4 @@
 import { Feather } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from '@react-navigation/native';
 import React, { Component, useEffect, useState } from 'react';
@@ -9,7 +8,7 @@ import styles from './SearchCommune.component.style';
 import NormalizeStrings from './../../../utils/normalizeStrings';
 import databaseService from '../../../utils/localStorage';
 
-/*
+/* Recherche de parcours par commune
 */
 class SearchCommune extends Component {
     constructor(props) {
@@ -65,7 +64,7 @@ const searchFilterFunction = (text, props) => {
                 : ''.toUpperCase(); // Rend insensible à la casse
             const textData = NormalizeStrings(text).replace('ST', 'SAINT');
             return itemData.indexOf(textData) > -1;
-        }).filter((item, i) => (i < 20)); // Limite du nombre de commune affichées en même temps "filtrées"
+        }).filter((item, i) => (i < 20)); // Limite du nombre de communes affichées en même temps "filtrées"
         props.setFilteredDataSource(newData); // Applique le filtre
         props.setSearch(text); // Remplit le champs
     } else {
@@ -95,10 +94,6 @@ export default function (props) {
             if (netInfoState.isInternetReachable != internetAvailable) {
                 setInternetAvailable(netInfoState.isInternetReachable);
             }
-
-            if (!netInfoState.isInternetReachable) {
-                Alert.alert("Connexion Internet indisponible", "Merci de réessayer une fois qu'Internet sera disponible");
-            }
         };
         checkInternetAvailability();
     }, []);
@@ -113,28 +108,32 @@ export default function (props) {
 
     // charge les communes, par internet si possible, en local sinon
     async function chargeCommunes() {
-        var temp;
+        let temp = null;
 
-        // si internet on prend les communes de la firebase
+        // si internet on prend les communes de firebase
         if (internetAvailable) {
             temp = await getAllCommunes();
+                    
+            // attribution des communes aux bonnes variables
+            setAllDataSource(temp);
+            setFilteredDataSource(temp);
         }
-        if (temp == undefined || temp.length == 0) {
+        if (!temp || temp.length == 0) {
             // si on n'a pas accès à la firebase, on regarde les communes disponibles en local
             databaseService.getAllCommunes(
                 (communes) => {
                     temp = communes ?? new Array();
+                    
+                    // attribution des communes aux bonnes variables
+                    setAllDataSource(temp);
+                    setFilteredDataSource(temp);
                 },
                 (errorMessage) => {
                     console.error(errorMessage);
-                    temp = new Array();
                 }
             );
         }
 
-        // attribution des communes aux bonnes variables
-        setAllDataSource(temp);
-        setFilteredDataSource(temp);
     }
 
     // recharge les communes quand la connectivité internet change

@@ -55,18 +55,6 @@ class LocalDatabaseService {
             );
             console.log('Etapes table created');
             await this.execSql(
-                `CREATE TABLE IF NOT EXISTS Audio (
-                    identifiant INTEGER PRIMARY KEY AUTOINCREMENT,
-                    etape_id TEXT,
-                    audio_data BLOB,
-                    FOREIGN KEY(etape_id) REFERENCES Etapes(identifiant)
-                )`/*,
-                [],
-                () => { console.log('Audio table created'); },
-                (tx, error) => { console.error('Error creating Audio table', error.message); }*/
-            );
-            console.log('Audio table created');
-            await this.execSql(
                 `CREATE TABLE IF NOT EXISTS GameHistory (
                     identifiant INTEGER PRIMARY KEY AUTOINCREMENT,
                     parcours_id TEXT,
@@ -103,24 +91,15 @@ class LocalDatabaseService {
                             (tx, results) => { console.log("parcours inséré"); },
                             (tx, error) => { console.log("parcours non inséré"); }
                         );
-                        etapes.forEach((etape) => {
+                        etapes.forEach(async (etape) => {
                             tx.executeSql(
                                 'INSERT OR IGNORE INTO Etapes (identifiant, parcours_id, etape_data) VALUES (?, ?, ?)',
                                 [etape.id_etape, parcours.identifiant, JSON.stringify(etape)],
-                                (tx, results) => { console.log("étape insérée"); },
+                                (tx, results) => {  },
                                 (tx, error) => { console.log("étape non insérée"); }
                             );
-                            if (etape.audio) { // etape.etape.son_url ou audio_url
-                                etape.audio.forEach(audio => {
-                                    tx.executeSql(
-                                        'INSERT OR IGNORE INTO Audio (etape_id, audio_data) VALUES (?, ?)',
-                                        [etape.identifiant, audio.data],
-                                        (tx, results) => { console.log("audio inséré"); },
-                                        (tx, error) => { console.log("audio non inséré"); }
-                                    );
-                                });
-                            }
                         });
+                        console.log(etapes.length, "étape(s) insérée(s)");
                     }, false);
 
                     if (successCallback) successCallback();
@@ -241,29 +220,15 @@ class LocalDatabaseService {
                             'SELECT * FROM Etapes WHERE parcours_id = ?',
                             [parcours.general.identifiant],
                             (tx, etapeResults) => {
-                                console.log(etapeResults.rows.length, "étapes chargées");
                                 parcours.etapes = [];
                                 for (let j = 0; j < etapeResults.rows.length; j++) {
                                     let etape = etapeResults.rows.item(j);
                                     etape = JSON.parse(etape.etape_data);
-                                    etape.audio = [];
-
-                                    tx.executeSql(
-                                        'SELECT * FROM Audio WHERE etape_id = ?',
-                                        [etape.identifiant],
-                                        (tx, audioResults) => {
-                                            for (let k = 0; k < audioResults.rows.length; k++) {
-                                                etape.audio.push(audioResults.rows.item(k));
-                                            }
-                                            parcours.etapes.push(etape);
-                                            if (j === etapeResults.rows.length - 1) {
-                                                successCallback(parcours);
-                                            }
-                                        },
-                                        (tx, error) => {
-                                            errorCallback("Audio SELECT error : " + error.message);
-                                        }
-                                    );
+                                    parcours.etapes.push(etape);
+                                    if (j === etapeResults.rows.length - 1) {
+                                        console.log(etapeResults.rows.length, "étapes chargées");
+                                        successCallback(parcours);
+                                    }
                                 }
                             },
                             (tx, error) => {
@@ -367,12 +332,13 @@ class LocalDatabaseService {
     getAllCommunes(successCallback, errorCallback) {
         this.db.transaction((tx) => {
             tx.executeSql(
-                'SELECT DISTINCT commune FROM Parcours',
+                'SELECT DISTINCT commune, code_postal FROM Parcours',
                 [],
                 (tx, results) => {
                     let communes = [];
                     for (let i = 0; i < results.rows.length; i++) {
-                        communes.push(results.rows.item(i));
+                        const entry = results.rows.item(i);
+                        communes.push(entry.commune + " (" + entry.code_postal + ")");
                     }
                     successCallback(communes);
                 },
@@ -480,26 +446,15 @@ class LocalDatabaseService {
                     if (results.rowsAffected === 0) {
                         errorCallback('Parcours not found');
                     }
-                    
                     tx.executeSql(
-                        `DELETE FROM Audio WHERE etape_id IN (SELECT identifiant FROM Etapes WHERE parcours_id = ?)`,
+                        `DELETE FROM Etapes WHERE parcours_id = ?`,
                         [id],
-                        (tx, results) => {
-                            console.log("Audio deleted");
-                            tx.executeSql(
-                                `DELETE FROM Etapes WHERE parcours_id = ?`,
-                                [id],
-                                (tx, result) => {
-                                    console.log("Etapes deleted");
-                                    successCallback();
-                                },
-                                (tx, error) => {
-                                    errorCallback("Etapes DELETE error : " + error.message);
-                                }
-                            )
+                        (tx, result) => {
+                            console.log("Etapes deleted");
+                            successCallback();
                         },
                         (tx, error) => {
-                            errorCallback("Audio DELETE error : " + error.message);
+                            errorCallback("Etapes DELETE error : " + error.message);
                         }
                     )
                 },

@@ -29,3 +29,7 @@ Project developped for [LPO Auvergne-Rhône-Alpes](https//auvergne-rhone-alpes.l
 - Tibo Preher
 - Valentin Pontiggia
 - Matthieu d'Hoop
+- Romuald Dubois
+- Cole Stannard
+- Mickael Osorio
+- Niels Kristen

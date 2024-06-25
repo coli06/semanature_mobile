@@ -6,6 +6,7 @@ import styles from './FindIntruder.component.style';
 import TopBarre from './../../../components/TopBarre/TopBarre.component';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
+import * as FileSystem from 'expo-file-system';
 
 class FindIntruder extends Component {
     constructor(props) {
@@ -13,18 +14,53 @@ class FindIntruder extends Component {
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state = {
             confirmClicked: false,
-            sound: null,
+            audio: null
         };
     }
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        this.loadAudio();
     }
-
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
-        if (this.state.sound) {
-            this.state.sound.unloadAsync();
+        const { audio } = this.state;
+        if (audio) {
+            audio.unloadAsync();
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            FileSystem.deleteAsync(fileUri).catch(error => console.warn('Error deleting temporary audio file :', error.message));
+        }
+    }
+
+    async loadAudio() {
+        const audioURL = this.props.currentGame.audio_url;
+        if (audioURL && audioURL !== '') {
+            const { audio } = this.state;
+            if (audio) {
+                await audio.unloadAsync();
+            }
+
+            // Write the base64 string to a temporary file
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            await FileSystem.writeAsStringAsync(fileUri, audioURL, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+           // Load the audio
+            const newAudio = await Audio.Sound.createAsync(
+                { uri: fileUri },
+                { shouldPlay: false }
+            );
+            this.setState({ audio: newAudio.sound });
+        }
+    }
+
+    async playSound() {
+        const { audio } = this.state;
+        if (audio) {
+            console.log("playing audio");
+            await audio.playAsync();
         }
     }
 
@@ -40,25 +76,8 @@ class FindIntruder extends Component {
         }
     }
 
-    async playSound() {
-        const { sound } = this.state;
-        if (sound) {
-            await sound.unloadAsync();
-        }
-        const { currentGame } = this.props;
-        if (currentGame.audio_url) {
-            const { sound } = await Audio.Sound.createAsync(
-                { uri: currentGame.audio_url }
-            );
-            this.setState({ sound });
-            await sound.playAsync();
-        }
-    }
-
     render() {
         const etapeMax = this.props.parcoursInfo.etape_max;
-        const hasAudio = this.currentGame.audio_url && this.currentGame.audio_url.trim() !== '';
-
         if (etapeMax === undefined) {
             var topBarreName = "";
         } else {
@@ -66,7 +85,7 @@ class FindIntruder extends Component {
         }
 
         const title = this.currentGame.nom;
-        const icone = hasAudio ? require('./../../../assets/trouver_l_intrus_icone.png') : null;
+        const icone = require('./../../../assets/trouver_l_intrus_icone.png');
 
         const legendeText0 = this.currentGame.legende_tab ? this.currentGame.legende_tab[0] : '';
         const legendeText1 = this.currentGame.legende_tab ? this.currentGame.legende_tab[1] : '';
@@ -81,6 +100,11 @@ class FindIntruder extends Component {
                         <View style={styles.card}>
                             <MainTitle title={title} icone={icone} />
                             <Text style={styles.description}>{this.currentGame.question}</Text>
+                            {this.props.currentGame.audio_url && (
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
+                                </TouchableOpacity>
+                            )}
                             <View style={styles.gameArea}>
                                 <View style={styles.rowFlex}>
                                     <TouchableOpacity style={styles.bouton}
@@ -127,11 +151,6 @@ class FindIntruder extends Component {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                            {hasAudio && (
-                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
-                                <Text style={styles.audioButtonText}>🔊</Text>
-                            </TouchableOpacity>
-                            )}
                         </View>
                     </ScrollView>
                 </View>

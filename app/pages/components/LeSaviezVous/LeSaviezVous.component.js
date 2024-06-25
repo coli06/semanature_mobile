@@ -7,24 +7,29 @@ import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import TopBarre from './../../../components/TopBarre/TopBarre.component';
 import NextPage from './../../components/NextPage/NextPage.component';
 import { parseText } from '../../../utils/parseText';
+import * as FileSystem from 'expo-file-system';
 
 class LeSaviezVous extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            sound: null,
+            audio: null
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+        this.loadAudio();
     }
     
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
-        if (this.state.sound) {
-            this.state.sound.unloadAsync();
+        const { audio } = this.state;
+        if (audio) {
+            audio.unloadAsync();
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            FileSystem.deleteAsync(fileUri).catch(error => console.warn('Error deleting temporary audio file :', error.message));
         }
     }
     
@@ -32,18 +37,34 @@ class LeSaviezVous extends Component {
         return true;
     }
 
-    async playSound() {
-        const { sound } = this.state;
-        if (sound) {
-            await sound.unloadAsync();
-        }
-        const { currentGame } = this.props;
-        if (currentGame.audio_url) {
-            const { sound } = await Audio.Sound.createAsync(
-                { uri: currentGame.audio_url }
+    async loadAudio() {
+        const audioURL = this.props.currentGame.audio_url;
+        if (audioURL && audioURL !== '') {
+            const { audio } = this.state;
+            if (audio) {
+                await audio.unloadAsync();
+            }
+
+            // Write the base64 string to a temporary file
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            await FileSystem.writeAsStringAsync(fileUri, audioURL, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+           // Load the audio
+            const newAudio = await Audio.Sound.createAsync(
+                { uri: fileUri },
+                { shouldPlay: false }
             );
-            this.setState({ sound });
-            await sound.playAsync();
+            this.setState({ audio: newAudio.sound });
+        }
+    }
+
+    async playSound() {
+        const { audio } = this.state;
+        if (audio) {
+            console.log("playing audio");
+            await audio.playAsync();
         }
     }
 
@@ -55,7 +76,6 @@ class LeSaviezVous extends Component {
         const icone = require('./../../../assets/le_saviez_vous_icone.png');
         const paragraph = parseText(currentGame.texte);
         const illustration = currentGame.image_url;
-        const hasAudio = currentGame.audio_url && currentGame.audio_url.trim() !== '';
 
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
@@ -63,10 +83,10 @@ class LeSaviezVous extends Component {
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
-                            <MainTitle title={title} icone={hasAudio ? icone : null} />
+                            <MainTitle title={title} icone={icone} />
                             {illustration !== '' && <Image source={{ uri: illustration }} style={styles.areaImage} />}
                             <Text style={styles.description}>{paragraph}</Text>
-                            {hasAudio && (
+                            {currentGame.audio_url && (
                                 <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
                                     <Text style={styles.audioButtonText}>🔊</Text>
                                 </TouchableOpacity>

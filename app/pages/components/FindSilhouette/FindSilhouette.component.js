@@ -6,6 +6,7 @@ import styles from './FindSilhouette.component.style.js'; // Import your style f
 import TopBarre from '../../../components/TopBarre/TopBarre.component.js';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
+import * as FileSystem from 'expo-file-system';
 
 class FindSilhouette extends Component {
     constructor(props) {
@@ -13,37 +14,58 @@ class FindSilhouette extends Component {
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state = {
             confirmClicked: false,
-            sound: null, // State to hold the loaded sound
-            hasAudio: false, // State to determine if audio should be displayed
+            audio: null // State to hold the loaded sound
         };
     }
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.checkAudioAvailability();
+        this.loadAudio();
     }
-
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
-        if (this.state.sound) {
-            this.state.sound.unloadAsync(); // Unload the sound when component unmounts
+        const { audio } = this.state;
+        if (audio) {
+            audio.unloadAsync();
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            FileSystem.deleteAsync(fileUri).catch(error => console.warn('Error deleting temporary audio file :', error.message));
+        }
+    }
+
+    async loadAudio() {
+        const audioURL = this.props.currentGame.audio_url;
+        if (audioURL && audioURL !== '') {
+            const { audio } = this.state;
+            if (audio) {
+                await audio.unloadAsync();
+            }
+
+            // Write the base64 string to a temporary file
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            await FileSystem.writeAsStringAsync(fileUri, audioURL, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+           // Load the audio
+            const newAudio = await Audio.Sound.createAsync(
+                { uri: fileUri },
+                { shouldPlay: false }
+            );
+            this.setState({ audio: newAudio.sound });
+        }
+    }
+
+    async playSound() {
+        const { audio } = this.state;
+        if (audio) {
+            console.log("playing audio");
+            await audio.playAsync();
         }
     }
 
     handleBackButtonClick() {
         return true;
-    }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.currentGame.audio_url !== this.props.currentGame.audio_url) {
-            this.checkAudioAvailability();
-        }
-    }
-
-    checkAudioAvailability() {
-        const { audio_url } = this.props.currentGame;
-        const hasAudio = audio_url && audio_url.trim() !== '';
-        this.setState({ hasAudio });
     }
 
     handleConfirmClicked = () => {
@@ -52,24 +74,8 @@ class FindSilhouette extends Component {
         }
     }
 
-    async playSound() {
-        const { sound } = this.state;
-        if (sound) {
-            await sound.unloadAsync(); // Unload any previously loaded sound
-        }
-        const { currentGame } = this.props;
-        if (currentGame.audio_url) {
-            const { sound } = await Audio.Sound.createAsync(
-                { uri: currentGame.audio_url }
-            );
-            this.setState({ sound });
-            await sound.playAsync();
-        }
-    }
-
     render() {
-        const { title, icone, question, image_url, images_tab } = this.props.currentGame;
-        const { hasAudio } = this.state;
+        const { title, icone, question, image_url, images_tab, audio_url } = this.props.currentGame;
 
         return (
             <SafeAreaView style={styles.outsideSafeArea}>
@@ -77,8 +83,13 @@ class FindSilhouette extends Component {
                 <View style={styles.globalContainer}>
                     <ScrollView contentContainerStyle={styles.scrollViewContainer} style={styles.scrollView}>
                         <View style={styles.card}>
-                            <MainTitle title={title} icone={hasAudio ? icone : null} />
+                            <MainTitle title={title} icone={icone} />
                             <Text style={styles.description}>{question}</Text>
+                            {audio_url && (
+                                <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()} disabled={this.state.confirmClicked}>
+                                    <Text style={styles.audioButtonText}>🔊</Text>
+                                </TouchableOpacity>
+                            )}
                             <Image source={{ uri: image_url }} style={styles.areaImage} />
                             <View style={styles.gameZone}>
                                 <View style={styles.rowFlex}>
@@ -99,15 +110,6 @@ class FindSilhouette extends Component {
                                         </TouchableOpacity>
                                     ))}
                                 </View>
-                                {hasAudio && (
-                                    <TouchableOpacity
-                                        style={styles.audioButton}
-                                        onPress={() => this.playSound()}
-                                        disabled={this.state.confirmClicked}
-                                    >
-                                        <Text style={styles.audioButtonText}>Play Sound</Text>
-                                    </TouchableOpacity>
-                                )}
                             </View>
                         </View>
                     </ScrollView>

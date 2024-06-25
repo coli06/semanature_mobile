@@ -9,26 +9,63 @@ import NextPage from '../NextPage/NextPage.component';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MainTitle from './../../../components/MainTitle/MainTitle.component';
 import NormalizeStrings from './../../../utils/normalizeStrings';
+import * as FileSystem from 'expo-file-system';
+
 
 class CodeCesar extends Component {
     constructor(props) {
         super(props);
         this.state = {
             newText: Cesar(NormalizeStrings(this.props.currentGame.texteBrut), parseInt(this.props.currentGame.decalage)),
-            isSoundLoaded: false,
-            sound: null,
+            audio: null
         };
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     }
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.loadSound();
+        this.loadAudio();
     }
-
+    
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.unloadSound();
+        const { audio } = this.state;
+        if (audio) {
+            audio.unloadAsync();
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            FileSystem.deleteAsync(fileUri).catch(error => console.warn('Error deleting temporary audio file :', error.message));
+        }
+    }
+
+    async loadAudio() {
+        const audioURL = this.props.currentGame.audio_url;
+        if (audioURL && audioURL !== '') {
+            const { audio } = this.state;
+            if (audio) {
+                await audio.unloadAsync();
+            }
+
+            // Write the base64 string to a temporary file
+            const fileUri = FileSystem.documentDirectory + 'temp_audio.mp3';
+            await FileSystem.writeAsStringAsync(fileUri, audioURL, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+           // Load the audio
+            const newAudio = await Audio.Sound.createAsync(
+                { uri: fileUri },
+                { shouldPlay: false }
+            );
+            this.setState({ audio: newAudio.sound });
+        }
+    }
+
+    async playSound() {
+        const { audio } = this.state;
+        if (audio) {
+            console.log("playing audio");
+            await audio.playAsync();
+        }
     }
 
     handleBackButtonClick() {
@@ -37,31 +74,6 @@ class CodeCesar extends Component {
 
     handleInputTextChange = (input) => {
         this.setState({ decoded: input });
-    }
-
-    async loadSound() {
-        const { audio_url } = this.props.currentGame;
-        if (audio_url && audio_url !== '') {
-            const { sound } = await Audio.Sound.createAsync(
-                { uri: audio_url },
-                { shouldPlay: false }
-            );
-            this.setState({ sound, isSoundLoaded: true });
-        }
-    }
-
-    async unloadSound() {
-        if (this.state.sound) {
-            await this.state.sound.unloadAsync();
-        }
-    }
-
-    async playSound() {
-        try {
-            await this.state.sound.playAsync();
-        } catch (error) {
-            console.error('Failed to play sound', error);
-        }
     }
 
     render() {
@@ -81,7 +93,7 @@ class CodeCesar extends Component {
                             <Text style={styles.description}>{question}</Text>
                             <Text style={styles.encodedText}>{this.state.newText}</Text>
                             <TextInput style={styles.inputTextField} onChangeText={this.handleInputTextChange} editable={true} placeholder="CODE" />
-                            {this.state.isSoundLoaded && (
+                            {this.props.currentGame.audio_url && (
                                 <TouchableOpacity style={styles.audioButton} onPress={() => this.playSound()}>
                                     <Text style={styles.audioButtonText}>🔊</Text>
                                 </TouchableOpacity>
