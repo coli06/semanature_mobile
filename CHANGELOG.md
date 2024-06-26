@@ -35,7 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Ajustement des tags de version (devant être uniques) pour permettre la mise en ligne sur le Play Store
 
 ## [1.5.0] - 2024-06-15
-(Erreur dans le choix du numéroe de version, le changement de SDK aurait justifié le pasage à la version 2.0.0)
+(Erreur dans le choix du numéro de version, le changement de SDK aurait justifié le pasage à la version 2.0.0)
 
 ### Added
 
